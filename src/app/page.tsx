@@ -49,7 +49,7 @@ export default function Home() {
         <div className="relative z-10 flex-1 flex items-center px-8 md:px-20">
           <div className="max-w-2xl">
             <h1 className="text-5xl md:text-6xl text-white font-serif font-light leading-tight mb-8">
-              Konaklamada yenilikçi deneyim
+              Kiralamada yenilikçi deneyim
             </h1>
             <p className="text-white/70 text-lg mb-10 max-w-lg leading-relaxed">
               Doğrulanmış kimlik, güvenli ödemeler ve objektif puanlama sistemiyle Türkiye'nin en güvenilir flatmate platformu.
