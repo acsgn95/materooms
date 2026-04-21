@@ -32,64 +32,64 @@ export default function ScoresPage() {
   ];
 
   const getBandInfo = (s: number) => {
-    if (s >= 750) return { label: 'Altın', color: 'text-amber-600', bg: 'bg-amber-50', description: 'Anlık onay ilanlarına erişim hakkın var' };
-    if (s >= 500) return { label: 'İyi', color: 'text-green-600', bg: 'bg-green-50', description: 'Güvenilir bir profil — çoğu ev sahibi onaylayacaktır' };
-    if (s >= 250) return { label: 'Orta', color: 'text-yellow-600', bg: 'bg-yellow-50', description: 'Ödeme düzenliliğini artırarak puanını yükselt' };
-    return { label: 'Düşük', color: 'text-red-600', bg: 'bg-red-50', description: 'Platform üzerinden ödeme zorunlu' };
+    if (s >= 750) return { label: 'Altın', color: 'text-amber-400', border: 'border-amber-500/30', description: 'Anlık onay ilanlarına erişim hakkın var' };
+    if (s >= 500) return { label: 'İyi', color: 'text-secondary', border: 'border-secondary/30', description: 'Güvenilir bir profil — çoğu ev sahibi onaylayacaktır' };
+    if (s >= 250) return { label: 'Orta', color: 'text-yellow-400', border: 'border-yellow-500/30', description: 'Ödeme düzenliliğini artırarak puanını yükselt' };
+    return { label: 'Düşük', color: 'text-red-400', border: 'border-red-500/30', description: 'Platform üzerinden ödeme zorunlu' };
   };
 
   const band = getBandInfo(score.total);
   const maxHistory = Math.max(...score.history.map((h) => h.score));
 
   return (
-    <div className="min-h-screen bg-light">
+    <div className="min-h-screen bg-black">
       <DashboardHeader />
 
       <main className="container-main py-12">
-        <Link href="/profile" className="flex items-center gap-2 text-gray-600 hover:text-dark mb-8">
+        <Link href="/profile" className="flex items-center gap-2 text-white/40 hover:text-white mb-8 transition">
           <ArrowLeft size={20} />
           Profile Dön
         </Link>
 
-        <h1 className="text-4xl font-bold mb-2">Flatmate Puanı</h1>
-        <p className="text-gray-600 mb-8">
+        <h1 className="text-4xl font-serif font-light text-white mb-2">Flatmate Puanı</h1>
+        <p className="text-white/40 mb-8">
           Puanın ödeme davranışına göre otomatik hesaplanır — manipüle edilemez
         </p>
 
         {/* Score Hero */}
-        <div className={`card mb-8 ${band.bg}`}>
+        <div className={`card mb-8 border ${band.border}`}>
           <div className="flex items-center justify-between">
             <div>
               <div className="flex items-end gap-3 mb-2">
-                <span className="text-7xl font-bold">{score.total}</span>
-                <span className="text-2xl text-gray-500 mb-3">/ 1000</span>
+                <span className={`text-7xl font-bold ${band.color}`}>{score.total}</span>
+                <span className="text-2xl text-white/30 mb-3">/ 1000</span>
               </div>
               <span className={`text-2xl font-bold ${band.color}`}>{band.label}</span>
-              <p className="text-gray-600 mt-2">{band.description}</p>
+              <p className="text-white/40 mt-2">{band.description}</p>
             </div>
-            <TrendingUp size={64} className={band.color} />
+            <TrendingUp size={64} className={`${band.color} opacity-30`} />
           </div>
         </div>
 
         <div className="grid lg:grid-cols-2 gap-8 mb-8">
           {/* Score Breakdown */}
           <div className="card">
-            <h2 className="text-xl font-bold mb-6">Puan Bileşenleri</h2>
+            <h2 className="text-xl font-semibold text-white mb-6">Puan Bileşenleri</h2>
             <div className="space-y-4">
               {Object.values(score.components).map((comp) => {
                 const pct = (comp.value / comp.max) * 100;
                 return (
                   <div key={comp.label}>
                     <div className="flex justify-between text-sm mb-1">
-                      <span className="font-medium">{comp.label}</span>
-                      <span className="text-gray-600">
+                      <span className="font-medium text-white">{comp.label}</span>
+                      <span className="text-white/40">
                         {comp.value * (1000 / 100)}/{comp.max * (1000 / 100)} puan
-                        <span className="text-gray-400 ml-1">({comp.weight})</span>
+                        <span className="text-white/25 ml-1">({comp.weight})</span>
                       </span>
                     </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div className="w-full bg-white/10 rounded-full h-2">
                       <div
-                        className={`h-2 rounded-full transition-all ${pct >= 80 ? 'bg-success' : pct >= 50 ? 'bg-warning' : 'bg-danger'}`}
+                        className={`h-2 rounded-full transition-all ${pct >= 80 ? 'bg-secondary' : pct >= 50 ? 'bg-amber-400' : 'bg-red-400'}`}
                         style={{ width: `${pct}%` }}
                       />
                     </div>
@@ -101,20 +101,15 @@ export default function ScoresPage() {
 
           {/* Score History */}
           <div className="card">
-            <h2 className="text-xl font-bold mb-6">Son 6 Ay</h2>
+            <h2 className="text-xl font-semibold text-white mb-6">Son 6 Ay</h2>
             <div className="flex items-end gap-2 h-32">
               {score.history.map((h) => {
                 const heightPct = (h.score / maxHistory) * 100;
                 return (
                   <div key={h.month} className="flex-1 flex flex-col items-center gap-1">
-                    <span className="text-xs font-semibold">{h.score}</span>
-                    <div
-                      className="w-full bg-primary rounded-t-md transition-all"
-                      style={{ height: `${heightPct}%` }}
-                    />
-                    <span className="text-xs text-gray-500 writing-mode-vertical" style={{ fontSize: '10px' }}>
-                      {h.month.split(' ')[0]}
-                    </span>
+                    <span className="text-xs font-semibold text-white">{h.score}</span>
+                    <div className="w-full bg-secondary rounded-t-md transition-all" style={{ height: `${heightPct}%` }} />
+                    <span className="text-white/30" style={{ fontSize: '10px' }}>{h.month.split(' ')[0]}</span>
                   </div>
                 );
               })}
@@ -124,24 +119,24 @@ export default function ScoresPage() {
 
         {/* Recent Events */}
         <div className="card mb-8">
-          <h2 className="text-xl font-bold mb-6">Son Puan Olayları</h2>
+          <h2 className="text-xl font-semibold text-white mb-6">Son Puan Olayları</h2>
           <div className="space-y-3">
             {recentEvents.map((event) => (
-              <div key={event.id} className="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
+              <div key={event.id} className="flex items-center justify-between p-3 border border-white/10 rounded-lg">
                 <div className="flex items-center gap-3">
                   {event.type === 'positive' ? (
-                    <CheckCircle size={18} className="text-success flex-shrink-0" />
+                    <CheckCircle size={18} className="text-secondary flex-shrink-0" />
                   ) : (
-                    <AlertCircle size={18} className="text-danger flex-shrink-0" />
+                    <AlertCircle size={18} className="text-red-400 flex-shrink-0" />
                   )}
                   <div>
-                    <p className="font-medium text-sm">{event.description}</p>
-                    <p className="text-xs text-gray-500">
+                    <p className="font-medium text-sm text-white">{event.description}</p>
+                    <p className="text-xs text-white/40">
                       {new Date(event.date).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' })}
                     </p>
                   </div>
                 </div>
-                <span className={`font-bold text-sm ${event.type === 'positive' ? 'text-success' : 'text-danger'}`}>
+                <span className={`font-bold text-sm ${event.type === 'positive' ? 'text-secondary' : 'text-red-400'}`}>
                   {event.points}
                 </span>
               </div>
@@ -150,13 +145,13 @@ export default function ScoresPage() {
         </div>
 
         {/* Appeals */}
-        <div className="card border-warning/30 bg-warning/5">
-          <h2 className="text-lg font-bold mb-2">Puan İtirazı</h2>
-          <p className="text-gray-600 text-sm mb-4">
+        <div className="card border-amber-500/30">
+          <h2 className="text-lg font-semibold text-white mb-2">Puan İtirazı</h2>
+          <p className="text-white/40 text-sm mb-4">
             Bir puan olayının hatalı olduğunu düşünüyorsan 30 gün içinde itiraz edebilirsin.
             İnceleme tamamlandığında hatalı olay puan hesabından çıkarılır.
           </p>
-          <button className="btn-outline border-warning text-warning hover:bg-warning/10">
+          <button className="btn-outline border-amber-500/50 text-amber-400 hover:bg-amber-500/10">
             İtiraz Başlat
           </button>
         </div>

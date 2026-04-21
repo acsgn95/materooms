@@ -8,7 +8,7 @@
 
 html,
 body {
-  @apply h-full;
+  @apply h-full bg-black text-white;
 }
 
 /* Utility classes */
@@ -17,25 +17,34 @@ body {
 }
 
 .btn-primary {
-  @apply px-6 py-3 bg-primary text-white rounded-lg font-semibold hover:bg-red-700 transition-colors;
+  @apply px-6 py-3 bg-secondary text-white rounded-full font-semibold hover:bg-cyan-500 transition-colors;
 }
 
 .btn-secondary {
-  @apply px-6 py-3 bg-secondary text-white rounded-lg font-semibold hover:bg-cyan-600 transition-colors;
+  @apply px-6 py-3 bg-white/10 text-white rounded-full font-semibold hover:bg-white/20 transition-colors;
 }
 
 .btn-outline {
-  @apply px-6 py-3 border-2 border-primary text-primary rounded-lg font-semibold hover:bg-red-50 transition-colors;
+  @apply px-6 py-3 border border-white/30 text-white rounded-full font-medium hover:bg-white/10 transition-colors;
+}
+
+.btn-danger {
+  @apply px-6 py-3 border border-red-500/50 text-red-400 rounded-full font-medium hover:bg-red-500/10 transition-colors;
 }
 
 .input-field {
-  @apply w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all;
-}
-
-.badge-verified {
-  @apply inline-flex items-center gap-1 px-3 py-1 bg-success text-white rounded-full text-sm font-medium;
+  @apply w-full px-4 py-3 bg-zinc-800 border border-white/10 rounded-lg text-white placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent transition-all;
 }
 
 .card {
-  @apply bg-white rounded-lg shadow-md border border-gray-100 p-6;
+  @apply bg-zinc-900 rounded-xl border border-white/10 p-6;
 }
+
+.badge-verified {
+  @apply inline-flex items-center gap-1 px-3 py-1 bg-secondary/20 text-secondary rounded-full text-sm font-medium;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #000; }
+::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }

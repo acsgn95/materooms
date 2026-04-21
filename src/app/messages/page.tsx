@@ -60,27 +60,26 @@ export default function MessagesPage() {
   const handleSend = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newMessage.trim()) return;
-    // API call would go here
     setNewMessage('');
   };
 
   return (
-    <div className="min-h-screen bg-light">
+    <div className="min-h-screen bg-black">
       <DashboardHeader />
 
       <main className="container-main py-6">
-        <div className="bg-white rounded-xl shadow-md overflow-hidden" style={{ height: 'calc(100vh - 120px)' }}>
+        <div className="border border-white/10 rounded-xl overflow-hidden bg-zinc-900" style={{ height: 'calc(100vh - 120px)' }}>
           <div className="flex h-full">
             {/* Sidebar — Conversation List */}
-            <div className="w-80 border-r flex flex-col flex-shrink-0">
-              <div className="p-4 border-b">
-                <h2 className="text-xl font-bold mb-3">Mesajlar</h2>
+            <div className="w-80 border-r border-white/10 flex flex-col flex-shrink-0">
+              <div className="p-4 border-b border-white/10">
+                <h2 className="text-xl font-semibold text-white mb-3">Mesajlar</h2>
                 <div className="relative">
-                  <Search className="absolute left-3 top-3 text-gray-400" size={16} />
+                  <Search className="absolute left-3 top-3 text-white/30" size={16} />
                   <input
                     type="text"
                     placeholder="Konuşma ara..."
-                    className="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                    className="w-full pl-9 pr-4 py-2 bg-zinc-800 border border-white/10 rounded-lg text-sm text-white placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-secondary"
                   />
                 </div>
               </div>
@@ -90,32 +89,32 @@ export default function MessagesPage() {
                   <button
                     key={conv.id}
                     onClick={() => setSelectedConversation(conv.id)}
-                    className={`w-full text-left p-4 border-b hover:bg-gray-50 transition ${
-                      selectedConversation === conv.id ? 'bg-primary/5 border-l-4 border-l-primary' : ''
+                    className={`w-full text-left p-4 border-b border-white/5 hover:bg-white/5 transition ${
+                      selectedConversation === conv.id ? 'bg-secondary/5 border-l-2 border-l-secondary' : ''
                     }`}
                   >
                     <div className="flex items-start gap-3">
                       <div className="relative flex-shrink-0">
-                        <div className="w-12 h-12 bg-gradient-to-br from-primary to-secondary rounded-full flex items-center justify-center text-white font-bold">
+                        <div className="w-12 h-12 bg-secondary/20 border border-secondary/30 rounded-full flex items-center justify-center text-secondary font-bold">
                           {conv.user.name[0]}
                         </div>
                         {conv.user.verified && (
-                          <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-success rounded-full flex items-center justify-center text-white text-xs">
+                          <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-secondary rounded-full flex items-center justify-center text-black text-xs font-bold">
                             ✓
                           </div>
                         )}
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex justify-between items-center">
-                          <p className="font-semibold text-sm truncate">{conv.user.name}</p>
+                          <p className="font-semibold text-sm text-white truncate">{conv.user.name}</p>
                           {conv.unreadCount > 0 && (
-                            <span className="bg-primary text-white text-xs rounded-full w-5 h-5 flex items-center justify-center flex-shrink-0">
+                            <span className="bg-secondary text-black text-xs rounded-full w-5 h-5 flex items-center justify-center flex-shrink-0 font-bold">
                               {conv.unreadCount}
                             </span>
                           )}
                         </div>
-                        <p className="text-xs text-gray-500 truncate">{conv.listingTitle}</p>
-                        <p className="text-xs text-gray-600 truncate mt-1">{conv.lastMessage}</p>
+                        <p className="text-xs text-white/30 truncate">{conv.listingTitle}</p>
+                        <p className="text-xs text-white/40 truncate mt-1">{conv.lastMessage}</p>
                       </div>
                     </div>
                   </button>
@@ -127,24 +126,21 @@ export default function MessagesPage() {
             {active ? (
               <div className="flex-1 flex flex-col">
                 {/* Thread Header */}
-                <div className="p-4 border-b flex items-center justify-between">
+                <div className="p-4 border-b border-white/10 flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-gradient-to-br from-primary to-secondary rounded-full flex items-center justify-center text-white font-bold">
+                    <div className="w-10 h-10 bg-secondary/20 border border-secondary/30 rounded-full flex items-center justify-center text-secondary font-bold">
                       {active.user.name[0]}
                     </div>
                     <div>
-                      <p className="font-bold">{active.user.name}</p>
-                      <p className="text-xs text-gray-500">Puan: {active.user.score} · {active.listingTitle}</p>
+                      <p className="font-semibold text-white">{active.user.name}</p>
+                      <p className="text-xs text-white/40">Puan: {active.user.score} · {active.listingTitle}</p>
                     </div>
                   </div>
                   <div className="flex gap-2">
-                    <button
-                      title="Şikayet Et"
-                      className="p-2 border border-gray-300 rounded-lg hover:border-danger hover:text-danger transition"
-                    >
+                    <button title="Şikayet Et" className="p-2 border border-white/10 rounded-lg hover:border-red-500/50 hover:text-red-400 text-white/60 transition">
                       <AlertTriangle size={18} />
                     </button>
-                    <button className="p-2 border border-gray-300 rounded-lg hover:border-primary transition">
+                    <button className="p-2 border border-white/10 rounded-lg hover:border-white/30 text-white/60 transition">
                       <MoreVertical size={18} />
                     </button>
                   </div>
@@ -159,16 +155,14 @@ export default function MessagesPage() {
                         <div
                           className={`max-w-xs lg:max-w-md px-4 py-3 rounded-2xl text-sm ${
                             isMe
-                              ? 'bg-primary text-white rounded-br-sm'
-                              : 'bg-gray-100 text-dark rounded-bl-sm'
+                              ? 'bg-secondary text-black rounded-br-sm'
+                              : 'bg-zinc-800 text-white rounded-bl-sm'
                           }`}
                         >
                           <p>{msg.content}</p>
-                          <p className={`text-xs mt-1 ${isMe ? 'text-white/70' : 'text-gray-500'}`}>
+                          <p className={`text-xs mt-1 ${isMe ? 'text-black/60' : 'text-white/40'}`}>
                             {new Date(msg.createdAt).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })}
-                            {isMe && (
-                              <span className="ml-1">{msg.read ? '✓✓' : '✓'}</span>
-                            )}
+                            {isMe && <span className="ml-1">{msg.read ? '✓✓' : '✓'}</span>}
                           </p>
                         </div>
                       </div>
@@ -177,8 +171,8 @@ export default function MessagesPage() {
                 </div>
 
                 {/* Message Input */}
-                <div className="p-4 border-t">
-                  <p className="text-xs text-gray-500 mb-2 text-center">
+                <div className="p-4 border-t border-white/10">
+                  <p className="text-xs text-white/30 mb-2 text-center">
                     Telefon numaraları paylaşılmaz — her iki taraf da onaylamadan
                   </p>
                   <form onSubmit={handleSend} className="flex gap-3">
@@ -187,20 +181,16 @@ export default function MessagesPage() {
                       placeholder="Mesajını yaz..."
                       value={newMessage}
                       onChange={(e) => setNewMessage(e.target.value)}
-                      className="flex-1 px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary"
+                      className="input-field"
                     />
-                    <button
-                      type="submit"
-                      disabled={!newMessage.trim()}
-                      className="btn-primary px-4 disabled:opacity-50"
-                    >
+                    <button type="submit" disabled={!newMessage.trim()} className="btn-primary px-4 disabled:opacity-50">
                       <Send size={20} />
                     </button>
                   </form>
                 </div>
               </div>
             ) : (
-              <div className="flex-1 flex items-center justify-center text-gray-400">
+              <div className="flex-1 flex items-center justify-center text-white/30">
                 Bir konuşma seç
               </div>
             )}

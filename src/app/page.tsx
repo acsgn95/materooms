@@ -1,157 +1,163 @@
 import Link from "next/link";
-import { ArrowRight, Lock, Zap, Users } from "lucide-react";
+import { Zap, ArrowRight, Shield, Star } from "lucide-react";
 
 export default function Home() {
   return (
-    <div className="min-h-screen">
-      {/* Navigation */}
-      <nav className="bg-white shadow-sm sticky top-0 z-50">
-        <div className="container-main py-4 flex justify-between items-center">
-          <div className="text-2xl font-bold text-primary">RoomMate</div>
-          <div className="flex gap-4">
-            <Link href="/auth/login" className="hover:text-primary transition">
+    <div className="min-h-screen bg-black font-sans">
+
+      {/* ── HERO ─────────────────────────────────────────────── */}
+      <section className="relative min-h-screen flex flex-col">
+
+        {/* Teal top border */}
+        <div className="absolute top-0 left-0 right-0 h-1 bg-secondary z-20" />
+
+        {/* Background image with overlay */}
+        <div className="absolute inset-0 z-0">
+          <img
+            src="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=1600&q=80"
+            alt=""
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-black/55" />
+        </div>
+
+        {/* Nav */}
+        <nav className="relative z-10 flex items-center justify-between px-8 py-6">
+          <div className="flex gap-6 text-sm text-white/70">
+            <Link href="#features" className="hover:text-white transition">Özellikler</Link>
+            <Link href="#how" className="hover:text-white transition">Nasıl Çalışır</Link>
+            <Link href="/b2b" className="hover:text-white transition">Kurumsal</Link>
+          </div>
+
+          {/* Centered logo */}
+          <div className="absolute left-1/2 -translate-x-1/2 text-white font-bold tracking-[0.3em] text-sm uppercase">
+            MateRooms
+          </div>
+
+          <div className="flex items-center gap-4 text-sm">
+            <Link href="/auth/login" className="text-white/80 hover:text-white transition font-medium">
               Giriş Yap
             </Link>
-            <Link href="/auth/register" className="btn-primary">
+            <Link href="/auth/register"
+              className="bg-secondary text-white px-5 py-2 rounded-full font-semibold hover:bg-cyan-500 transition text-sm">
               Kaydol
             </Link>
           </div>
-        </div>
-      </nav>
+        </nav>
 
-      {/* Hero Section */}
-      <section className="bg-gradient-to-br from-primary/10 to-secondary/10 py-20">
-        <div className="container-main">
+        {/* Hero text */}
+        <div className="relative z-10 flex-1 flex items-center px-8 md:px-20">
           <div className="max-w-2xl">
-            <h1 className="text-5xl font-bold text-dark mb-6">
-              Güvenilir Arkadaş Bul, Huzur İçinde Yaşa
+            <h1 className="text-5xl md:text-6xl text-white font-serif font-light leading-tight mb-8">
+              Konaklamada yenilikçi deneyim
             </h1>
-            <p className="text-xl text-gray-600 mb-8">
-              RoomMate, Turkey'nin ilk doğrulanmış ortak yaşam platformu. Kimlik doğrulaması, güvenli ödemeler ve objektif puanlama sistemiyle flatmate bulma artık daha güvenli.
+            <p className="text-white/70 text-lg mb-10 max-w-lg leading-relaxed">
+              Doğrulanmış kimlik, güvenli ödemeler ve objektif puanlama sistemiyle Türkiye'nin en güvenilir flatmate platformu.
             </p>
             <div className="flex gap-4">
-              <Link href="/auth/register" className="btn-primary flex items-center gap-2">
-                Hemen Başla <ArrowRight size={20} />
+              <Link href="/auth/register"
+                className="bg-secondary text-white px-8 py-3 rounded-full font-semibold hover:bg-cyan-500 transition flex items-center gap-2">
+                Hemen Başla <ArrowRight size={18} />
               </Link>
-              <Link href="#features" className="btn-outline">
-                Daha Fazla Bilgi
+              <Link href="#features"
+                className="border border-white/40 text-white px-8 py-3 rounded-full font-medium hover:bg-white/10 transition">
+                Keşfet
               </Link>
             </div>
           </div>
         </div>
+
+        {/* Stats bar */}
+        <div className="relative z-10 border-t border-white/10">
+          <div className="flex divide-x divide-white/10">
+            {[
+              { value: '340%', label: 'Kira Artışı (3 Yıl)' },
+              { value: '1000+', label: 'İlk Kullanıcı' },
+              { value: '3', label: 'Büyük Şehir' },
+              { value: '%100', label: 'Doğrulanmış Üye' },
+            ].map((s) => (
+              <div key={s.label} className="flex-1 py-5 text-center">
+                <div className="text-secondary text-2xl font-bold">{s.value}</div>
+                <div className="text-white/50 text-xs mt-1">{s.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
       </section>
 
-      {/* Features Section */}
-      <section id="features" className="py-20">
-        <div className="container-main">
-          <h2 className="text-4xl font-bold text-center mb-16">Neden RoomMate?</h2>
-          
+      {/* ── FEATURES ─────────────────────────────────────────── */}
+      <section id="features" className="bg-black py-24 px-8">
+        <div className="max-w-5xl mx-auto">
+          <p className="text-secondary text-xs font-semibold tracking-widest uppercase mb-4">Neden MateRooms?</p>
+          <h2 className="text-4xl md:text-5xl text-white font-serif font-light mb-16 max-w-xl">
+            Güven, tüm kararların merkezinde
+          </h2>
           <div className="grid md:grid-cols-3 gap-8">
-            {/* Feature 1 */}
-            <div className="card text-center">
-              <div className="bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Lock className="text-primary" size={32} />
+            {[
+              { icon: <Shield size={28} />, title: 'Doğrulanmış Kimlik', desc: 'Telefon, TC Kimlik, yüz eşleştirmesi ve suç kaydı kontrolü ile çok katmanlı KYC.' },
+              { icon: <Zap size={28} />, title: 'Güvenli Ödemeler', desc: 'İyzico altyapısıyla kira ve gider ödemeleri. Otomatik komisyon, anında transfer.' },
+              { icon: <Star size={28} />, title: 'Flatmate Puanı', desc: 'Ödeme davranışından türetilen, manipüle edilemeyen taşınabilir itibar skoru.' },
+            ].map((f) => (
+              <div key={f.title} className="border border-white/10 rounded-2xl p-8 hover:border-secondary/50 transition">
+                <div className="text-secondary mb-5">{f.icon}</div>
+                <h3 className="text-white font-semibold text-lg mb-3">{f.title}</h3>
+                <p className="text-white/50 text-sm leading-relaxed">{f.desc}</p>
               </div>
-              <h3 className="text-xl font-bold mb-3">Doğrulanmış Kimlik</h3>
-              <p className="text-gray-600">
-                Çok katmanlı KYC doğrulaması: telefon, TC kimlik, yüz eşleştirmesi ve suç kaydı kontrolü
-              </p>
-            </div>
-
-            {/* Feature 2 */}
-            <div className="card text-center">
-              <div className="bg-secondary/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Zap className="text-secondary" size={32} />
-              </div>
-              <h3 className="text-xl font-bold mb-3">Güvenli Ödemeler</h3>
-              <p className="text-gray-600">
-                İyzico ile işletilen kiralık ödemeler. Otomatik komisyon kesintisi ve anında aktarım
-              </p>
-            </div>
-
-            {/* Feature 3 */}
-            <div className="card text-center">
-              <div className="bg-success/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Users className="text-success" size={32} />
-              </div>
-              <h3 className="text-xl font-bold mb-3">Flatmate Puanı</h3>
-              <p className="text-gray-600">
-                Ödeme davranışından türetilen taşınamaz puanlama sistemi. Geleceğinizi taşıyın
-              </p>
-            </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Stats Section */}
-      <section className="bg-dark text-white py-16">
-        <div className="container-main">
-          <div className="grid md:grid-cols-4 gap-8 text-center">
-            <div>
-              <div className="text-4xl font-bold text-primary mb-2">340%</div>
-              <p>Kira artışı (3 yıl)</p>
-            </div>
-            <div>
-              <div className="text-4xl font-bold text-secondary mb-2">3</div>
-              <p>Büyük Şehir</p>
-            </div>
-            <div>
-              <div className="text-4xl font-bold text-success mb-2">1000+</div>
-              <p>İlk Kullanıcı</p>
-            </div>
-            <div>
-              <div className="text-4xl font-bold text-warning mb-2">0%</div>
-              <p>Gizlilik Endişesi</p>
-            </div>
+      {/* ── HOW IT WORKS ─────────────────────────────────────── */}
+      <section id="how" className="bg-zinc-950 py-24 px-8">
+        <div className="max-w-5xl mx-auto">
+          <p className="text-secondary text-xs font-semibold tracking-widest uppercase mb-4">Nasıl Çalışır?</p>
+          <h2 className="text-4xl text-white font-serif font-light mb-16">Üç adımda başla</h2>
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              { step: '01', title: 'Kaydol & Doğrula', desc: 'Telefon numaranla kaydol. TC kimliğini yükle, profilini tamamla.' },
+              { step: '02', title: 'İlan Oluştur veya Ara', desc: 'Üç ilan tipinden birini seç. Filtrelerle ideal eşleşmeyi bul.' },
+              { step: '03', title: 'Güvenle Taşın', desc: 'Doğrulanmış profiller, puan geçmişi ve güvenli ödeme altyapısıyla huzurla başla.' },
+            ].map((s) => (
+              <div key={s.step} className="flex gap-6">
+                <div className="text-secondary/30 text-5xl font-bold leading-none flex-shrink-0">{s.step}</div>
+                <div>
+                  <h3 className="text-white font-semibold text-lg mb-2">{s.title}</h3>
+                  <p className="text-white/50 text-sm leading-relaxed">{s.desc}</p>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="bg-light py-16">
-        <div className="container-main text-center">
-          <h2 className="text-3xl font-bold mb-6">Arkadaşını Bul, Hayatını Başlat</h2>
-          <p className="text-gray-600 mb-8 max-w-2xl mx-auto">
-            Güvenilir, doğrulanmış ve şeffaf bir platform ile kira bulma süreci artık daha kolay
-          </p>
-          <Link href="/auth/register" className="btn-primary inline-flex items-center gap-2">
-            Ücretsiz Kaydol <ArrowRight size={20} />
+      {/* ── CONTACT ──────────────────────────────────────────── */}
+      <section className="bg-black py-24 px-8 text-center border-t border-white/10">
+        <p className="text-white/30 text-xs tracking-widest uppercase mb-6">—</p>
+        <h2 className="text-4xl md:text-5xl text-white/80 font-serif font-light mb-8">Contact Us</h2>
+        <p className="text-white/40 mb-10">Sorularınız için bize ulaşın</p>
+        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <a href="mailto:hello@materooms.com"
+            className="border border-white/20 text-white/70 px-8 py-3 rounded-full hover:border-secondary hover:text-secondary transition text-sm">
+            hello@materooms.com
+          </a>
+          <Link href="/auth/register"
+            className="bg-secondary text-white px-8 py-3 rounded-full font-semibold hover:bg-cyan-500 transition text-sm flex items-center justify-center gap-2">
+            Platforma Katıl <ArrowRight size={16} />
           </Link>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="bg-dark text-gray-400 py-12">
-        <div className="container-main">
-          <div className="grid md:grid-cols-4 gap-8 mb-8">
-            <div>
-              <h4 className="text-white font-bold mb-4">RoomMate</h4>
-              <p className="text-sm">Türkiye'nin doğrulanmış flatmate platformu</p>
-            </div>
-            <div>
-              <h4 className="text-white font-bold mb-4">Ürün</h4>
-              <ul className="text-sm space-y-2">
-                <li><a href="#" className="hover:text-white">Nasıl Çalışır</a></li>
-                <li><a href="#" className="hover:text-white">Fiyatlandırma</a></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="text-white font-bold mb-4">Yasal</h4>
-              <ul className="text-sm space-y-2">
-                <li><a href="#" className="hover:text-white">Gizlilik</a></li>
-                <li><a href="#" className="hover:text-white">Kullanıcı Sözleşmesi</a></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="text-white font-bold mb-4">İletişim</h4>
-              <ul className="text-sm space-y-2">
-                <li><a href="mailto:hello@roommate.com" className="hover:text-white">hello@roommate.com</a></li>
-              </ul>
-            </div>
+      {/* ── FOOTER ───────────────────────────────────────────── */}
+      <footer className="bg-black border-t border-white/10 py-10 px-8">
+        <div className="max-w-5xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+          <div className="text-white font-bold tracking-[0.3em] text-sm uppercase">MateRooms</div>
+          <div className="flex gap-8 text-white/40 text-sm">
+            <a href="#" className="hover:text-white transition">Gizlilik</a>
+            <a href="#" className="hover:text-white transition">Kullanıcı Sözleşmesi</a>
+            <Link href="/b2b" className="hover:text-white transition">Kurumsal</Link>
           </div>
-          <div className="border-t border-gray-700 pt-8 text-center text-sm">
-            <p>&copy; 2026 RoomMate. Tüm hakları saklıdır.</p>
-          </div>
+          <p className="text-white/30 text-sm">© 2026 MateRooms</p>
         </div>
       </footer>
     </div>

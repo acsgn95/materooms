@@ -9,7 +9,6 @@ import { useParams } from 'next/navigation';
 export default function ListingDetailPage() {
   const params = useParams();
 
-  // Mock data — replace with API call using params.id
   const listing = {
     id: params.id,
     type: 'room_available',
@@ -55,11 +54,11 @@ export default function ListingDetailPage() {
   };
 
   return (
-    <div className="min-h-screen bg-light">
+    <div className="min-h-screen bg-black">
       <DashboardHeader />
 
       <main className="container-main py-12">
-        <Link href="/listings" className="flex items-center gap-2 text-gray-600 hover:text-dark mb-8">
+        <Link href="/listings" className="flex items-center gap-2 text-white/40 hover:text-white mb-8 transition">
           <ArrowLeft size={20} />
           İlanlara Dön
         </Link>
@@ -69,14 +68,11 @@ export default function ListingDetailPage() {
           <div className="lg:col-span-2 space-y-6">
             {/* Photo Gallery */}
             <div className="grid grid-cols-4 gap-2 h-64">
-              <div className="col-span-2 row-span-2 bg-gradient-to-br from-primary/10 to-secondary/10 rounded-xl flex items-center justify-center text-8xl">
+              <div className="col-span-2 row-span-2 bg-zinc-800 rounded-xl flex items-center justify-center text-8xl">
                 {listing.photos[0]}
               </div>
               {listing.photos.slice(1).map((p, i) => (
-                <div
-                  key={i}
-                  className="bg-gradient-to-br from-primary/5 to-secondary/5 rounded-xl flex items-center justify-center text-4xl"
-                >
+                <div key={i} className="bg-zinc-800 rounded-xl flex items-center justify-center text-4xl">
                   {p}
                 </div>
               ))}
@@ -87,66 +83,62 @@ export default function ListingDetailPage() {
               <div className="flex justify-between items-start mb-4">
                 <div>
                   <span className="text-xs font-semibold text-secondary bg-secondary/10 px-2 py-1 rounded-full mb-2 inline-block">
-                    {listing.type === 'room_available'
-                      ? 'Oda Var'
-                      : listing.type === 'looking_for_room'
-                      ? 'Oda Arıyorum'
-                      : 'Birlikte Ara'}
+                    {listing.type === 'room_available' ? 'Oda Var' : listing.type === 'looking_for_room' ? 'Oda Arıyorum' : 'Birlikte Ara'}
                   </span>
-                  <h1 className="text-3xl font-bold">{listing.title}</h1>
-                  <div className="flex items-center gap-2 text-gray-600 mt-2">
-                    <MapPin size={16} className="text-primary" />
+                  <h1 className="text-3xl font-serif font-light text-white">{listing.title}</h1>
+                  <div className="flex items-center gap-2 text-white/40 mt-2">
+                    <MapPin size={16} className="text-secondary" />
                     {listing.city} / {listing.district} / {listing.neighborhood}
                   </div>
                 </div>
                 <div className="flex gap-2">
-                  <button className="p-2 border border-gray-300 rounded-lg hover:border-primary transition">
-                    <Heart size={20} className="text-primary" />
+                  <button className="p-2 border border-white/10 rounded-lg hover:border-secondary/50 transition">
+                    <Heart size={20} className="text-white/60" />
                   </button>
-                  <button className="p-2 border border-gray-300 rounded-lg hover:border-primary transition">
-                    <Share2 size={20} />
+                  <button className="p-2 border border-white/10 rounded-lg hover:border-white/30 transition">
+                    <Share2 size={20} className="text-white/60" />
                   </button>
-                  <button className="p-2 border border-gray-300 rounded-lg hover:border-danger transition">
-                    <Flag size={20} className="text-danger" />
+                  <button className="p-2 border border-white/10 rounded-lg hover:border-red-500/50 transition">
+                    <Flag size={20} className="text-white/60" />
                   </button>
                 </div>
               </div>
 
-              <div className="grid grid-cols-3 gap-4 py-4 border-y">
+              <div className="grid grid-cols-3 gap-4 py-4 border-y border-white/10">
                 <div className="text-center">
-                  <p className="text-2xl font-bold text-primary">
+                  <p className="text-2xl font-bold text-secondary">
                     ₺{listing.monthlyRent.perPerson?.toLocaleString('tr-TR')}
                   </p>
-                  <p className="text-xs text-gray-600">Kişi Başı / Ay</p>
+                  <p className="text-xs text-white/40">Kişi Başı / Ay</p>
                 </div>
                 <div className="text-center">
-                  <div className="flex items-center justify-center gap-1 text-xl font-bold">
+                  <div className="flex items-center justify-center gap-1 text-xl font-bold text-white">
                     <Users size={20} className="text-secondary" />
                     {listing.residents.current}/{listing.residents.total}
                   </div>
-                  <p className="text-xs text-gray-600">Mevcut / Toplam Kişi</p>
+                  <p className="text-xs text-white/40">Mevcut / Toplam Kişi</p>
                 </div>
                 <div className="text-center">
-                  <div className="flex items-center justify-center gap-1 text-xl font-bold">
-                    <Calendar size={20} className="text-success" />
+                  <div className="flex items-center justify-center gap-1 text-xl font-bold text-white">
+                    <Calendar size={20} className="text-secondary" />
                     {new Date(listing.moveInDate).toLocaleDateString('tr-TR', { day: 'numeric', month: 'short' })}
                   </div>
-                  <p className="text-xs text-gray-600">Giriş Tarihi</p>
+                  <p className="text-xs text-white/40">Giriş Tarihi</p>
                 </div>
               </div>
 
-              <p className="mt-4 text-gray-700 leading-relaxed">{listing.description}</p>
+              <p className="mt-4 text-white/60 leading-relaxed">{listing.description}</p>
             </div>
 
             {/* Amenities */}
             <div className="card">
-              <h2 className="text-xl font-bold mb-4">Ev Özellikleri</h2>
+              <h2 className="text-xl font-semibold text-white mb-4">Ev Özellikleri</h2>
               <div className="grid grid-cols-3 gap-3">
                 {listing.amenities.map((a) => {
                   const config = amenityLabels[a];
                   return config ? (
-                    <div key={a} className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg text-sm font-medium">
-                      {config.icon}
+                    <div key={a} className="flex items-center gap-2 p-3 bg-zinc-800 rounded-lg text-sm font-medium text-white/70">
+                      <span className="text-secondary">{config.icon}</span>
                       {config.label}
                     </div>
                   ) : null;
@@ -156,18 +148,18 @@ export default function ListingDetailPage() {
 
             {/* House Rules */}
             <div className="card">
-              <h2 className="text-xl font-bold mb-4">Ev Kuralları</h2>
+              <h2 className="text-xl font-semibold text-white mb-4">Ev Kuralları</h2>
               <div className="grid grid-cols-2 gap-3 text-sm">
-                <div className={`flex items-center gap-2 p-3 rounded-lg ${listing.houseRules.smoking ? 'bg-red-50 text-red-700' : 'bg-green-50 text-green-700'}`}>
+                <div className={`flex items-center gap-2 p-3 rounded-lg ${listing.houseRules.smoking ? 'bg-red-500/10 text-red-400' : 'bg-secondary/10 text-secondary'}`}>
                   {listing.houseRules.smoking ? '🚬 Sigara İçilebilir' : '🚭 Sigara Yasak'}
                 </div>
-                <div className={`flex items-center gap-2 p-3 rounded-lg ${listing.houseRules.pets ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
+                <div className={`flex items-center gap-2 p-3 rounded-lg ${listing.houseRules.pets ? 'bg-secondary/10 text-secondary' : 'bg-red-500/10 text-red-400'}`}>
                   {listing.houseRules.pets ? '🐾 Evcil Hayvan Uygun' : '🚫 Evcil Hayvan Yasak'}
                 </div>
-                <div className="flex items-center gap-2 p-3 rounded-lg bg-gray-50 text-gray-700">
+                <div className="flex items-center gap-2 p-3 rounded-lg bg-white/5 text-white/60">
                   🌙 Sessiz Saat: {listing.houseRules.quietHours?.start} – {listing.houseRules.quietHours?.end}
                 </div>
-                <div className="flex items-center gap-2 p-3 rounded-lg bg-gray-50 text-gray-700">
+                <div className="flex items-center gap-2 p-3 rounded-lg bg-white/5 text-white/60">
                   👥 Cinsiyet: {listing.houseRules.genderPreference === 'any' ? 'Fark Etmez' : listing.houseRules.genderPreference}
                 </div>
               </div>
@@ -179,11 +171,11 @@ export default function ListingDetailPage() {
             {/* CTA */}
             <div className="card sticky top-24">
               <div className="text-center mb-6">
-                <p className="text-3xl font-bold text-primary">
+                <p className="text-3xl font-bold text-secondary">
                   ₺{listing.monthlyRent.perPerson?.toLocaleString('tr-TR')}
-                  <span className="text-base font-normal text-gray-600">/ay</span>
+                  <span className="text-base font-normal text-white/40">/ay</span>
                 </p>
-                <p className="text-sm text-gray-600">Toplam kira: ₺{listing.monthlyRent.full.toLocaleString('tr-TR')}</p>
+                <p className="text-sm text-white/40">Toplam kira: ₺{listing.monthlyRent.full.toLocaleString('tr-TR')}</p>
               </div>
 
               <Link href="/messages" className="btn-primary w-full flex items-center justify-center gap-2 mb-3">
@@ -192,22 +184,22 @@ export default function ListingDetailPage() {
               </Link>
               <button className="btn-outline w-full">Favorilere Ekle</button>
 
-              <div className="mt-4 pt-4 border-t text-xs text-gray-500 text-center">
+              <div className="mt-4 pt-4 border-t border-white/10 text-xs text-white/30 text-center">
                 İlan {new Date(listing.expiresAt).toLocaleDateString('tr-TR')} tarihine kadar geçerli
               </div>
             </div>
 
             {/* Owner Card */}
             <div className="card">
-              <h3 className="font-bold mb-4">İlan Sahibi</h3>
+              <h3 className="font-semibold text-white mb-4">İlan Sahibi</h3>
               <div className="flex items-start gap-4 mb-4">
-                <div className="w-16 h-16 bg-gradient-to-br from-primary to-secondary rounded-full flex items-center justify-center text-white text-2xl font-bold flex-shrink-0">
+                <div className="w-16 h-16 bg-secondary/20 border border-secondary/30 rounded-full flex items-center justify-center text-secondary text-2xl font-bold flex-shrink-0">
                   {owner.name[0]}
                 </div>
                 <div>
-                  <p className="font-bold text-lg">{owner.name}</p>
-                  <p className="text-sm text-gray-600">{owner.age} yaş · {owner.occupation}</p>
-                  <p className="text-xs text-gray-500 mt-1">
+                  <p className="font-bold text-lg text-white">{owner.name}</p>
+                  <p className="text-sm text-white/40">{owner.age} yaş · {owner.occupation}</p>
+                  <p className="text-xs text-white/30 mt-1">
                     {new Date(owner.memberSince).toLocaleDateString('tr-TR', { year: 'numeric', month: 'long' })} üye
                   </p>
                 </div>
@@ -222,7 +214,7 @@ export default function ListingDetailPage() {
               </div>
 
               {owner.bio && (
-                <p className="text-sm text-gray-600 italic border-t pt-3">"{owner.bio}"</p>
+                <p className="text-sm text-white/40 italic border-t border-white/10 pt-3">"{owner.bio}"</p>
               )}
             </div>
           </div>
