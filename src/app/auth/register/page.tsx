@@ -129,7 +129,7 @@ export default function RegisterPage() {
                 <div key={f.key}>
                   <label className="block text-xs font-semibold text-white/60 mb-1 uppercase tracking-wider">{f.label}</label>
                   <input type={f.type} placeholder={f.placeholder} required={f.required}
-                    value={(profile as Record<string, string>)[f.key]}
+                    value={(profile as unknown as Record<string, string>)[f.key]}
                     onChange={(e) => setProfile({ ...profile, [f.key]: e.target.value })}
                     className="input-field" />
                 </div>
@@ -200,7 +200,7 @@ export default function RegisterPage() {
                   ].map((f) => (
                     <div key={f.key}>
                       <label className="block text-xs text-white/40 mb-1">{f.label}</label>
-                      <select value={(profile as Record<string, string>)[f.key]}
+                      <select value={(profile as unknown as Record<string, string>)[f.key]}
                         onChange={(e) => setProfile({ ...profile, [f.key]: e.target.value })} className="input-field text-sm py-2">
                         <option value="">Seç</option>
                         {f.opts.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
@@ -211,7 +211,7 @@ export default function RegisterPage() {
                 <div className="flex gap-6">
                   {[['smoking','Sigara'],['pets','Evcil Hayvan']].map(([key, label]) => (
                     <label key={key} className="flex items-center gap-2 cursor-pointer text-sm text-white/60">
-                      <input type="checkbox" checked={(profile as Record<string, boolean>)[key]}
+                      <input type="checkbox" checked={(profile as unknown as Record<string, boolean>)[key]}
                         onChange={(e) => setProfile({ ...profile, [key]: e.target.checked })}
                         className="accent-secondary" />
                       {label}
