@@ -12,37 +12,44 @@ const images = [
 ];
 
 export default function HeroSlideshow() {
-  const [current, setCurrent] = useState(0);
-  const [next, setNext] = useState(1);
-  const [transitioning, setTransitioning] = useState(false);
+  const [active, setActive] = useState(0);
+  const [fading, setFading] = useState(false);
+
+  const next = (active + 1) % images.length;
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setTransitioning(true);
-      setTimeout(() => {
-        setCurrent((c) => (c + 1) % images.length);
-        setNext((n) => (n + 1) % images.length);
-        setTransitioning(false);
-      }, 1000);
+      setFading(true);
     }, 5000);
     return () => clearInterval(interval);
   }, []);
 
+  useEffect(() => {
+    if (!fading) return;
+    const timer = setTimeout(() => {
+      setActive((a) => (a + 1) % images.length);
+      setFading(false);
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, [fading]);
+
   return (
     <div className="absolute inset-0 z-0 overflow-hidden">
-      {/* Current image */}
-      <img
-        src={images[current]}
-        alt=""
-        className="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000"
-        style={{ opacity: transitioning ? 0 : 1 }}
-      />
-      {/* Next image (preloaded underneath) */}
+      {/* Alt katman: her zaman sıradaki görsel, opacity 1 */}
       <img
         src={images[next]}
         alt=""
         className="absolute inset-0 w-full h-full object-cover"
-        style={{ opacity: transitioning ? 1 : 0, transition: 'opacity duration-1000' }}
+      />
+      {/* Üst katman: aktif görsel, fade out olunca alttaki görünür */}
+      <img
+        src={images[active]}
+        alt=""
+        className="absolute inset-0 w-full h-full object-cover"
+        style={{
+          opacity: fading ? 0 : 1,
+          transition: 'opacity 1s ease-in-out',
+        }}
       />
       <div className="absolute inset-0 bg-black/60" />
     </div>
