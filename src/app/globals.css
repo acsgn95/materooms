@@ -17,7 +17,13 @@ body {
 }
 
 .btn-primary {
-  @apply px-6 py-3 bg-secondary text-white rounded-full font-semibold hover:bg-cyan-500 transition-colors;
+  @apply px-6 py-3 text-white rounded-full font-semibold transition-all;
+  background: linear-gradient(135deg, #E8192C 0%, #F7933A 100%);
+}
+.btn-primary:hover {
+  background: linear-gradient(135deg, #c9151f 0%, #e07a28 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 20px rgba(232, 25, 44, 0.4);
 }
 
 .btn-secondary {
@@ -33,7 +39,12 @@ body {
 }
 
 .input-field {
-  @apply w-full px-4 py-3 bg-zinc-800 border border-white/10 rounded-lg text-white placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent transition-all;
+  @apply w-full px-4 py-3 bg-zinc-800 border border-white/10 rounded-lg text-white placeholder:text-white/30 focus:outline-none focus:ring-2 focus:border-transparent transition-all;
+  --tw-ring-color: #E8192C;
+}
+.input-field:focus {
+  border-color: transparent;
+  box-shadow: 0 0 0 2px #E8192C;
 }
 
 .card {
@@ -41,7 +52,16 @@ body {
 }
 
 .badge-verified {
-  @apply inline-flex items-center gap-1 px-3 py-1 bg-secondary/20 text-secondary rounded-full text-sm font-medium;
+  @apply inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium;
+  background: rgba(232, 25, 44, 0.15);
+  color: #F7933A;
+}
+
+.brand-gradient-text {
+  background: linear-gradient(135deg, #E8192C 0%, #F7933A 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 /* Scrollbar */

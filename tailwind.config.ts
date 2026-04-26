@@ -9,16 +9,20 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        primary: '#FF6B6B',
-        secondary: '#4ECDC4',
-        dark: '#2D3436',
+        primary: '#E8192C',
+        secondary: '#E8192C',
+        accent: '#F7933A',
+        dark: '#1A1A1A',
         light: '#F5F6FA',
         success: '#26C281',
         warning: '#F9CA24',
-        danger: '#EE5A6F',
+        danger: '#E8192C',
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
+      },
+      backgroundImage: {
+        'brand-gradient': 'linear-gradient(135deg, #E8192C 0%, #F7933A 100%)',
       },
     },
   },

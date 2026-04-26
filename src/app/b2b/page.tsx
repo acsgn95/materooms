@@ -80,9 +80,9 @@ export default function B2BPage() {
             <p className="text-white/40 text-center mb-12">İlan hacminize göre uygun planı seçin</p>
             <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
               {PLANS.map((plan) => (
-                <div key={plan.name} className={`card flex flex-col relative ${plan.highlighted ? 'border-secondary shadow-[0_0_30px_rgba(78,205,196,0.1)]' : ''}`}>
+                <div key={plan.name} className={`card flex flex-col relative ${plan.highlighted ? 'border-secondary shadow-[0_0_30px_rgba(232,25,44,0.15)]' : ''}`}>
                   {plan.highlighted && (
-                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-secondary text-black text-xs font-bold px-4 py-1 rounded-full">
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 text-white text-xs font-bold px-4 py-1 rounded-full" style={{ background: 'linear-gradient(135deg, #E8192C, #F7933A)' }}>
                       En Popüler
                     </div>
                   )}
