@@ -32,7 +32,7 @@ export default function Home() {
 
           {/* Logo */}
           <div className="absolute left-1/2 -translate-x-1/2">
-            <img src="/logo.png" alt="MateRooms" className="h-10 object-contain" />
+            <img src="/logo.png" alt="MateRooms" className="h-16 object-contain" />
           </div>
 
           <div className="flex items-center gap-4 text-sm">
@@ -159,7 +159,7 @@ export default function Home() {
       {/* ── FOOTER ───────────────────────────────────────────── */}
       <footer className="bg-black border-t border-white/10 py-10 px-8">
         <div className="max-w-5xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
-          <img src="/logo.png" alt="MateRooms" className="h-8 object-contain" />
+          <img src="/logo.png" alt="MateRooms" className="h-12 object-contain" />
           <div className="flex gap-8 text-white/40 text-sm">
             <a href="#" className="hover:text-white transition">Gizlilik</a>
             <a href="#" className="hover:text-white transition">Kullanıcı Sözleşmesi</a>
