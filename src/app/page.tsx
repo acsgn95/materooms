@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Zap, ArrowRight, Shield, Star } from "lucide-react";
+import HeroSlideshow from "@/components/HeroSlideshow";
 
 export default function Home() {
   return (
@@ -12,15 +13,7 @@ export default function Home() {
         <div className="absolute top-0 left-0 right-0 h-1 z-20"
           style={{ background: 'linear-gradient(90deg, #E8192C 0%, #F7933A 100%)' }} />
 
-        {/* Background image with overlay */}
-        <div className="absolute inset-0 z-0">
-          <img
-            src="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=1600&q=80"
-            alt=""
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-black/60" />
-        </div>
+        <HeroSlideshow />
 
         {/* Nav */}
         <nav className="relative z-10 flex items-center justify-between px-8 py-6">
