@@ -18,12 +18,12 @@ body {
 
 .btn-primary {
   @apply px-6 py-3 text-white rounded-full font-semibold transition-all;
-  background: linear-gradient(135deg, #E8192C 0%, #F7933A 100%);
+  background: #B91C2E;
 }
 .btn-primary:hover {
-  background: linear-gradient(135deg, #c9151f 0%, #e07a28 100%);
+  background: #9E1827;
   transform: translateY(-1px);
-  box-shadow: 0 4px 20px rgba(232, 25, 44, 0.4);
+  box-shadow: 0 4px 16px rgba(159, 24, 39, 0.35);
 }
 
 .btn-secondary {

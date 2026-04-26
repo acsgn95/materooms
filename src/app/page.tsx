@@ -11,7 +11,7 @@ export default function Home() {
 
         {/* Brand gradient top border */}
         <div className="absolute top-0 left-0 right-0 h-1 z-20"
-          style={{ background: 'linear-gradient(90deg, #E8192C 0%, #F7933A 100%)' }} />
+          style={{ background: 'linear-gradient(90deg, #B91C2E 0%, #C8602A 100%)' }} />
 
         <HeroSlideshow />
 
@@ -42,7 +42,7 @@ export default function Home() {
         <div className="relative z-10 flex-1 flex items-center px-8 md:px-20">
           <div className="max-w-2xl">
             <p className="text-xs font-semibold tracking-widest uppercase mb-4"
-              style={{ color: '#F7933A' }}>
+              style={{ color: '#C8602A' }}>
               LIVE SHARED
             </p>
             <h1 className="text-5xl md:text-6xl text-white font-serif font-light leading-tight mb-8">
@@ -84,7 +84,7 @@ export default function Home() {
       {/* ── FEATURES ─────────────────────────────────────────── */}
       <section id="features" className="bg-black py-24 px-8">
         <div className="max-w-5xl mx-auto">
-          <p className="text-xs font-semibold tracking-widest uppercase mb-4" style={{ color: '#F7933A' }}>
+          <p className="text-xs font-semibold tracking-widest uppercase mb-4" style={{ color: '#C8602A' }}>
             Neden MateRooms?
           </p>
           <h2 className="text-4xl md:text-5xl text-white font-serif font-light mb-16 max-w-xl">
@@ -111,7 +111,7 @@ export default function Home() {
       {/* ── HOW IT WORKS ─────────────────────────────────────── */}
       <section id="how" className="bg-zinc-950 py-24 px-8">
         <div className="max-w-5xl mx-auto">
-          <p className="text-xs font-semibold tracking-widest uppercase mb-4" style={{ color: '#F7933A' }}>
+          <p className="text-xs font-semibold tracking-widest uppercase mb-4" style={{ color: '#C8602A' }}>
             Nasıl Çalışır?
           </p>
           <h2 className="text-4xl text-white font-serif font-light mb-16">Üç adımda başla</h2>
