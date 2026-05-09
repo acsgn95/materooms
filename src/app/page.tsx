@@ -81,16 +81,6 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="relative z-10 border-t border-white/10">
-          <div className="flex divide-x divide-white/10">
-            {home.stats.map((stat) => (
-              <div key={stat.label} className="flex-1 py-5 text-center">
-                <div className="text-2xl font-bold brand-gradient-text">{stat.value}</div>
-                <div className="text-white/50 text-xs mt-1">{stat.label}</div>
-              </div>
-            ))}
-          </div>
-        </div>
       </section>
 
       <section id="features" className="bg-black py-24 px-8">

@@ -37,12 +37,6 @@
         "primaryCta": "Hemen Başla",
         "secondaryCta": "Keşfet"
       },
-      "stats": [
-        { "value": "340%", "label": "Kira Artışı (3 Yıl)" },
-        { "value": "1000+", "label": "İlk Kullanıcı" },
-        { "value": "3", "label": "Büyük Şehir" },
-        { "value": "%100", "label": "Doğrulanmış Üye" }
-      ],
       "features": {
         "eyebrow": "Neden MateRooms?",
         "title": "Güven, tüm kararların merkezinde",
@@ -149,12 +143,6 @@
         "primaryCta": "Get Started",
         "secondaryCta": "Explore"
       },
-      "stats": [
-        { "value": "340%", "label": "Rent Increase (3 Years)" },
-        { "value": "1000+", "label": "First Users" },
-        { "value": "3", "label": "Major Cities" },
-        { "value": "100%", "label": "Verified Members" }
-      ],
       "features": {
         "eyebrow": "Why MateRooms?",
         "title": "Trust sits at the center of every decision",
