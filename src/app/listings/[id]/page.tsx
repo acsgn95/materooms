@@ -5,19 +5,16 @@ import { VerificationBadges, ScoreBadge } from '@/components/common/DashboardHea
 import { ArrowLeft, MapPin, Users, Calendar, Wifi, Sofa, WashingMachine, Wind, MessageSquare, Heart, Share2, Flag } from 'lucide-react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
+import { useI18n } from '@/i18n/I18nProvider';
 
 export default function ListingDetailPage() {
   const params = useParams();
+  const { locale, t } = useI18n();
+  const dateLocale = locale === 'tr' ? 'tr-TR' : 'en-US';
 
   const listing = {
     id: params.id,
     type: 'room_available',
-    title: "Beşiktaş'ta 2+1 Ev — Arkadaş Aranıyor",
-    description:
-      "Ortaköy'de deniz manzaralı, 2+1 ferah dairede ev arkadaşı arıyoruz. Ev tamamen mobilyalı, internet dahil. Temiz, saygılı ve sosyal biri arıyoruz. Hafta sonları evde olabilirsiniz, misafir kabulü önceden haber vermek koşuluyla uygun.",
-    city: 'İstanbul',
-    district: 'Beşiktaş',
-    neighborhood: 'Ortaköy',
     monthlyRent: { full: 15000, perPerson: 7500 },
     moveInDate: '2026-05-01',
     residents: { current: 1, total: 2 },
@@ -35,23 +32,22 @@ export default function ListingDetailPage() {
 
   const owner = {
     id: 'u1',
-    name: 'Ahmet Yılmaz',
     age: 27,
-    occupation: 'Yazılım Mühendisi',
-    city: 'İstanbul',
     verificationBadges: ['phone_verified', 'id_verified'],
     flatmateScore: 720,
-    bio: 'Çalışkan, temiz ve saygılı birisiyim. Evde düzen önemli.',
     memberSince: '2026-01-01',
   };
 
   const amenityLabels: Record<string, { label: string; icon: React.ReactNode }> = {
-    furnished: { label: 'Mobilyalı', icon: <Sofa size={16} /> },
-    internet: { label: 'İnternet', icon: <Wifi size={16} /> },
-    washing_machine: { label: 'Çamaşır Makinesi', icon: <WashingMachine size={16} /> },
-    balcony: { label: 'Balkon', icon: <Wind size={16} /> },
-    ac: { label: 'Klima', icon: <Wind size={16} /> },
+    furnished: { label: t('common.amenities.furnished'), icon: <Sofa size={16} /> },
+    internet: { label: t('common.amenities.internet'), icon: <Wifi size={16} /> },
+    washing_machine: { label: t('common.amenities.washing_machine'), icon: <WashingMachine size={16} /> },
+    balcony: { label: t('common.amenities.balcony'), icon: <Wind size={16} /> },
+    ac: { label: t('common.amenities.ac'), icon: <Wind size={16} /> },
   };
+  const ownerName = t('listingDetail.mock.owner.name');
+  const ownerBio = t('listingDetail.mock.owner.bio');
+  const ownerOccupation = t('listingDetail.mock.owner.occupation');
 
   return (
     <div className="min-h-screen bg-black">
@@ -60,7 +56,7 @@ export default function ListingDetailPage() {
       <main className="container-main py-12">
         <Link href="/listings" className="flex items-center gap-2 text-white/40 hover:text-white mb-8 transition">
           <ArrowLeft size={20} />
-          İlanlara Dön
+          {t('listingDetail.back')}
         </Link>
 
         <div className="grid lg:grid-cols-3 gap-8">
@@ -83,12 +79,12 @@ export default function ListingDetailPage() {
               <div className="flex justify-between items-start mb-4">
                 <div>
                   <span className="text-xs font-semibold text-secondary bg-secondary/10 px-2 py-1 rounded-full mb-2 inline-block">
-                    {listing.type === 'room_available' ? 'Oda Var' : listing.type === 'looking_for_room' ? 'Oda Arıyorum' : 'Birlikte Ara'}
+                    {t(`common.listingTypes.${listing.type}`)}
                   </span>
-                  <h1 className="text-3xl font-serif font-light text-white">{listing.title}</h1>
+                  <h1 className="text-3xl font-serif font-light text-white">{t('listingDetail.mock.listing.title')}</h1>
                   <div className="flex items-center gap-2 text-white/40 mt-2">
                     <MapPin size={16} className="text-secondary" />
-                    {listing.city} / {listing.district} / {listing.neighborhood}
+                    {t('listingDetail.mock.listing.city')} / {t('listingDetail.mock.listing.district')} / {t('listingDetail.mock.listing.neighborhood')}
                   </div>
                 </div>
                 <div className="flex gap-2">
@@ -107,32 +103,32 @@ export default function ListingDetailPage() {
               <div className="grid grid-cols-3 gap-4 py-4 border-y border-white/10">
                 <div className="text-center">
                   <p className="text-2xl font-bold text-secondary">
-                    ₺{listing.monthlyRent.perPerson?.toLocaleString('tr-TR')}
+                    ₺{listing.monthlyRent.perPerson?.toLocaleString(dateLocale)}
                   </p>
-                  <p className="text-xs text-white/40">Kişi Başı / Ay</p>
+                  <p className="text-xs text-white/40">{t('listingDetail.metrics.rentPerPerson')}</p>
                 </div>
                 <div className="text-center">
                   <div className="flex items-center justify-center gap-1 text-xl font-bold text-white">
                     <Users size={20} className="text-secondary" />
                     {listing.residents.current}/{listing.residents.total}
                   </div>
-                  <p className="text-xs text-white/40">Mevcut / Toplam Kişi</p>
+                  <p className="text-xs text-white/40">{t('listingDetail.metrics.residents')}</p>
                 </div>
                 <div className="text-center">
                   <div className="flex items-center justify-center gap-1 text-xl font-bold text-white">
                     <Calendar size={20} className="text-secondary" />
-                    {new Date(listing.moveInDate).toLocaleDateString('tr-TR', { day: 'numeric', month: 'short' })}
+                    {new Date(listing.moveInDate).toLocaleDateString(dateLocale, { day: 'numeric', month: 'short' })}
                   </div>
-                  <p className="text-xs text-white/40">Giriş Tarihi</p>
+                  <p className="text-xs text-white/40">{t('listingDetail.metrics.moveIn')}</p>
                 </div>
               </div>
 
-              <p className="mt-4 text-white/60 leading-relaxed">{listing.description}</p>
+              <p className="mt-4 text-white/60 leading-relaxed">{t('listingDetail.mock.listing.description')}</p>
             </div>
 
             {/* Amenities */}
             <div className="card">
-              <h2 className="text-xl font-semibold text-white mb-4">Ev Özellikleri</h2>
+              <h2 className="text-xl font-semibold text-white mb-4">{t('listingDetail.sections.amenities')}</h2>
               <div className="grid grid-cols-3 gap-3">
                 {listing.amenities.map((a) => {
                   const config = amenityLabels[a];
@@ -148,19 +144,19 @@ export default function ListingDetailPage() {
 
             {/* House Rules */}
             <div className="card">
-              <h2 className="text-xl font-semibold text-white mb-4">Ev Kuralları</h2>
+              <h2 className="text-xl font-semibold text-white mb-4">{t('listingDetail.sections.rules')}</h2>
               <div className="grid grid-cols-2 gap-3 text-sm">
                 <div className={`flex items-center gap-2 p-3 rounded-lg ${listing.houseRules.smoking ? 'bg-red-500/10 text-red-400' : 'bg-secondary/10 text-secondary'}`}>
-                  {listing.houseRules.smoking ? '🚬 Sigara İçilebilir' : '🚭 Sigara Yasak'}
+                  {listing.houseRules.smoking ? t('listingDetail.rules.smokingAllowed') : t('listingDetail.rules.smokingForbidden')}
                 </div>
                 <div className={`flex items-center gap-2 p-3 rounded-lg ${listing.houseRules.pets ? 'bg-secondary/10 text-secondary' : 'bg-red-500/10 text-red-400'}`}>
-                  {listing.houseRules.pets ? '🐾 Evcil Hayvan Uygun' : '🚫 Evcil Hayvan Yasak'}
+                  {listing.houseRules.pets ? t('listingDetail.rules.petsAllowed') : t('listingDetail.rules.petsForbidden')}
                 </div>
                 <div className="flex items-center gap-2 p-3 rounded-lg bg-white/5 text-white/60">
-                  🌙 Sessiz Saat: {listing.houseRules.quietHours?.start} – {listing.houseRules.quietHours?.end}
+                  {t('listingDetail.rules.quietHours', { start: listing.houseRules.quietHours?.start, end: listing.houseRules.quietHours?.end })}
                 </div>
                 <div className="flex items-center gap-2 p-3 rounded-lg bg-white/5 text-white/60">
-                  👥 Cinsiyet: {listing.houseRules.genderPreference === 'any' ? 'Fark Etmez' : listing.houseRules.genderPreference}
+                  {t('listingDetail.rules.gender', { gender: t(`common.gender.${listing.houseRules.genderPreference}`) })}
                 </div>
               </div>
             </div>
@@ -172,35 +168,35 @@ export default function ListingDetailPage() {
             <div className="card sticky top-24">
               <div className="text-center mb-6">
                 <p className="text-3xl font-bold text-secondary">
-                  ₺{listing.monthlyRent.perPerson?.toLocaleString('tr-TR')}
-                  <span className="text-base font-normal text-white/40">/ay</span>
+                  ₺{listing.monthlyRent.perPerson?.toLocaleString(dateLocale)}
+                  <span className="text-base font-normal text-white/40">{t('listingDetail.cta.perMonth')}</span>
                 </p>
-                <p className="text-sm text-white/40">Toplam kira: ₺{listing.monthlyRent.full.toLocaleString('tr-TR')}</p>
+                <p className="text-sm text-white/40">{t('listingDetail.cta.totalRent', { amount: listing.monthlyRent.full.toLocaleString(dateLocale) })}</p>
               </div>
 
               <Link href="/messages" className="btn-primary w-full flex items-center justify-center gap-2 mb-3">
                 <MessageSquare size={20} />
-                Mesaj Gönder
+                {t('listingDetail.cta.message')}
               </Link>
-              <button className="btn-outline w-full">Favorilere Ekle</button>
+              <button className="btn-outline w-full">{t('listingDetail.cta.favorite')}</button>
 
               <div className="mt-4 pt-4 border-t border-white/10 text-xs text-white/30 text-center">
-                İlan {new Date(listing.expiresAt).toLocaleDateString('tr-TR')} tarihine kadar geçerli
+                {t('listingDetail.cta.validUntil', { date: new Date(listing.expiresAt).toLocaleDateString(dateLocale) })}
               </div>
             </div>
 
             {/* Owner Card */}
             <div className="card">
-              <h3 className="font-semibold text-white mb-4">İlan Sahibi</h3>
+              <h3 className="font-semibold text-white mb-4">{t('listingDetail.sections.owner')}</h3>
               <div className="flex items-start gap-4 mb-4">
                 <div className="w-16 h-16 bg-secondary/20 border border-secondary/30 rounded-full flex items-center justify-center text-secondary text-2xl font-bold flex-shrink-0">
-                  {owner.name[0]}
+                  {ownerName[0]}
                 </div>
                 <div>
-                  <p className="font-bold text-lg text-white">{owner.name}</p>
-                  <p className="text-sm text-white/40">{owner.age} yaş · {owner.occupation}</p>
+                  <p className="font-bold text-lg text-white">{ownerName}</p>
+                  <p className="text-sm text-white/40">{t('listingDetail.owner.ageOccupation', { age: owner.age, occupation: ownerOccupation })}</p>
                   <p className="text-xs text-white/30 mt-1">
-                    {new Date(owner.memberSince).toLocaleDateString('tr-TR', { year: 'numeric', month: 'long' })} üye
+                    {t('listingDetail.owner.memberSince', { date: new Date(owner.memberSince).toLocaleDateString(dateLocale, { year: 'numeric', month: 'long' }) })}
                   </p>
                 </div>
               </div>
@@ -213,8 +209,8 @@ export default function ListingDetailPage() {
                 <ScoreBadge score={owner.flatmateScore} />
               </div>
 
-              {owner.bio && (
-                <p className="text-sm text-white/40 italic border-t border-white/10 pt-3">"{owner.bio}"</p>
+              {ownerBio && (
+                <p className="text-sm text-white/40 italic border-t border-white/10 pt-3">"{ownerBio}"</p>
               )}
             </div>
           </div>

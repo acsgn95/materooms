@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { DashboardHeader } from '@/components/common/DashboardHeader';
 import { Search, MapPin, Users, Heart, SlidersHorizontal } from 'lucide-react';
 import Link from 'next/link';
+import { useI18n } from '@/i18n/I18nProvider';
 
 type Listing = {
   id: string;
@@ -24,27 +25,22 @@ type Listing = {
 };
 
 const scoreBand = (score: number) => {
-  if (score >= 750) return { label: 'Altın', color: 'bg-amber-500/20 text-amber-400' };
-  if (score >= 500) return { label: 'İyi', color: 'bg-secondary/20 text-secondary' };
-  if (score >= 250) return { label: 'Orta', color: 'bg-yellow-500/20 text-yellow-400' };
-  return { label: 'Düşük', color: 'bg-red-500/20 text-red-400' };
-};
-
-const typeLabels = {
-  room_available: 'Oda Var',
-  looking_for_room: 'Oda Arıyorum',
-  looking_together: 'Birlikte Ara',
+  if (score >= 750) return { labelKey: 'gold', color: 'bg-amber-500/20 text-amber-400' };
+  if (score >= 500) return { labelKey: 'good', color: 'bg-secondary/20 text-secondary' };
+  if (score >= 250) return { labelKey: 'medium', color: 'bg-yellow-500/20 text-yellow-400' };
+  return { labelKey: 'low', color: 'bg-red-500/20 text-red-400' };
 };
 
 const MOCK_LISTINGS: Listing[] = [
-  { id: '1', type: 'room_available', title: "Beşiktaş'ta 2+1 Ev — Arkadaş Aranıyor", city: 'İstanbul', district: 'Beşiktaş', neighborhood: 'Ortaköy', monthlyRent: 7500, moveInDate: '2026-05-01', residents: { current: 1, total: 2 }, owner: 'Ahmet Yılmaz', ownerScore: 720, ownerVerified: true, gender: 'any', amenities: ['Mobilyalı', 'İnternet', 'Klima'], createdAt: '2026-04-18' },
-  { id: '2', type: 'looking_for_room', title: "Şişli'de Oda Arıyorum", city: 'İstanbul', district: 'Şişli', neighborhood: 'Merkez', monthlyRent: 8000, moveInDate: '2026-06-01', residents: { current: 0, total: 2 }, owner: 'Zeynep Kaya', ownerScore: 680, ownerVerified: true, gender: 'female', amenities: ['İnternet', 'Balkon'], createdAt: '2026-04-19' },
-  { id: '3', type: 'room_available', title: "Taksim'de Güzel Daire — 3 Kişilik", city: 'İstanbul', district: 'Beyoğlu', neighborhood: 'Taksim', monthlyRent: 6000, moveInDate: '2026-04-15', residents: { current: 2, total: 3 }, owner: 'Ali Demir', ownerScore: 850, ownerVerified: true, gender: 'any', amenities: ['Mobilyalı', 'İnternet', 'Çamaşır Makinesi', 'Balkon'], createdAt: '2026-04-15' },
-  { id: '4', type: 'room_available', title: "Kadıköy'de Arkadaş Arıyorum", city: 'İstanbul', district: 'Kadıköy', neighborhood: 'Moda', monthlyRent: 9500, moveInDate: '2026-05-15', residents: { current: 1, total: 2 }, owner: 'Selin Çiçek', ownerScore: 720, ownerVerified: false, gender: 'female', amenities: ['Mobilyalı', 'İnternet'], createdAt: '2026-04-20' },
-  { id: '5', type: 'looking_together', title: 'Ataşehir İçin Ev Arkadaşı Arıyorum', city: 'İstanbul', district: 'Ataşehir', neighborhood: 'Ataşehir', monthlyRent: 5000, moveInDate: '2026-06-01', residents: { current: 0, total: 2 }, owner: 'Mert Yıldız', ownerScore: 590, ownerVerified: true, gender: 'male', amenities: ['İnternet'], createdAt: '2026-04-17' },
+  { id: '1', type: 'room_available', title: '', city: '', district: '', neighborhood: '', monthlyRent: 7500, moveInDate: '2026-05-01', residents: { current: 1, total: 2 }, owner: '', ownerScore: 720, ownerVerified: true, gender: 'any', amenities: ['furnished', 'internet', 'ac'], createdAt: '2026-04-18' },
+  { id: '2', type: 'looking_for_room', title: '', city: '', district: '', neighborhood: '', monthlyRent: 8000, moveInDate: '2026-06-01', residents: { current: 0, total: 2 }, owner: '', ownerScore: 680, ownerVerified: true, gender: 'female', amenities: ['internet', 'balcony'], createdAt: '2026-04-19' },
+  { id: '3', type: 'room_available', title: '', city: '', district: '', neighborhood: '', monthlyRent: 6000, moveInDate: '2026-04-15', residents: { current: 2, total: 3 }, owner: '', ownerScore: 850, ownerVerified: true, gender: 'any', amenities: ['furnished', 'internet', 'washing_machine', 'balcony'], createdAt: '2026-04-15' },
+  { id: '4', type: 'room_available', title: '', city: '', district: '', neighborhood: '', monthlyRent: 9500, moveInDate: '2026-05-15', residents: { current: 1, total: 2 }, owner: '', ownerScore: 720, ownerVerified: false, gender: 'female', amenities: ['furnished', 'internet'], createdAt: '2026-04-20' },
+  { id: '5', type: 'looking_together', title: '', city: '', district: '', neighborhood: '', monthlyRent: 5000, moveInDate: '2026-06-01', residents: { current: 0, total: 2 }, owner: '', ownerScore: 590, ownerVerified: true, gender: 'male', amenities: ['internet'], createdAt: '2026-04-17' },
 ];
 
 export default function ListingsPage() {
+  const { locale, t } = useI18n();
   const [filters, setFilters] = useState({
     city: 'istanbul',
     district: '',
@@ -91,46 +87,46 @@ export default function ListingsPage() {
 
       <main className="container-main py-8">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-serif font-light text-white">İlanları Keşfet</h1>
-          <p className="text-white/40 text-sm">{filtered.length} ilan bulundu</p>
+          <h1 className="text-3xl font-serif font-light text-white">{t('listings.title')}</h1>
+          <p className="text-white/40 text-sm">{t('listings.found', { count: filtered.length })}</p>
         </div>
 
         {/* Search Bar */}
         <div className="card mb-6">
           <div className="flex flex-wrap gap-3 items-end">
             <div className="flex-1 min-w-36">
-              <label className="block text-xs font-semibold text-white/60 mb-1 uppercase tracking-wider">Şehir</label>
+              <label className="block text-xs font-semibold text-white/60 mb-1 uppercase tracking-wider">{t('listings.filters.city')}</label>
               <select value={filters.city} onChange={(e) => setFilters({ ...filters, city: e.target.value })} className="input-field py-2">
-                <option value="istanbul">İstanbul</option>
-                <option value="ankara">Ankara</option>
-                <option value="izmir">İzmir</option>
+                <option value="istanbul">{t('common.cities.istanbul')}</option>
+                <option value="ankara">{t('common.cities.ankara')}</option>
+                <option value="izmir">{t('common.cities.izmir')}</option>
               </select>
             </div>
             <div className="flex-1 min-w-36">
-              <label className="block text-xs font-semibold text-white/60 mb-1 uppercase tracking-wider">Max Bütçe (₺)</label>
+              <label className="block text-xs font-semibold text-white/60 mb-1 uppercase tracking-wider">{t('listings.filters.maxBudget')}</label>
               <input type="number" placeholder="20000" value={filters.maxBudget}
                 onChange={(e) => setFilters({ ...filters, maxBudget: e.target.value })}
                 className="input-field py-2" />
             </div>
             <div className="flex-1 min-w-36">
-              <label className="block text-xs font-semibold text-white/60 mb-1 uppercase tracking-wider">Sıralama</label>
+              <label className="block text-xs font-semibold text-white/60 mb-1 uppercase tracking-wider">{t('listings.filters.sort')}</label>
               <select value={sortBy} onChange={(e) => setSortBy(e.target.value as typeof sortBy)} className="input-field py-2">
-                <option value="newest">En Yeni</option>
-                <option value="price_asc">Fiyat (Düşük→Yüksek)</option>
-                <option value="price_desc">Fiyat (Yüksek→Düşük)</option>
-                <option value="score">Doğrulama Seviyesi</option>
+                <option value="newest">{t('listings.sort.newest')}</option>
+                <option value="price_asc">{t('listings.sort.price_asc')}</option>
+                <option value="price_desc">{t('listings.sort.price_desc')}</option>
+                <option value="score">{t('listings.sort.score')}</option>
               </select>
             </div>
             <button onClick={() => setShowFilters(!showFilters)} className="btn-outline flex items-center gap-2 py-2">
               <SlidersHorizontal size={18} />
-              Filtreler
+              {t('listings.filters.filters')}
               {(filters.type !== 'all' || filters.gender !== 'all' || filters.verifiedOnly || filters.moveInDate || filters.minScore) && (
                 <span className="w-2 h-2 bg-secondary rounded-full" />
               )}
             </button>
             <button className="btn-primary flex items-center gap-2 py-2">
               <Search size={18} />
-              Ara
+              {t('common.actions.search')}
             </button>
           </div>
 
@@ -138,36 +134,36 @@ export default function ListingsPage() {
           {showFilters && (
             <div className="border-t border-white/10 pt-4 mt-4 grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
               <div>
-                <label className="block text-xs font-semibold text-white/60 mb-1 uppercase tracking-wider">İlan Türü</label>
+                <label className="block text-xs font-semibold text-white/60 mb-1 uppercase tracking-wider">{t('listings.filters.type')}</label>
                 <select value={filters.type} onChange={(e) => setFilters({ ...filters, type: e.target.value })} className="input-field py-2 text-sm">
-                  <option value="all">Tümü</option>
-                  <option value="room_available">Oda Var</option>
-                  <option value="looking_for_room">Oda Arıyorum</option>
-                  <option value="looking_together">Birlikte Ara</option>
+                  <option value="all">{t('listings.filters.all')}</option>
+                  <option value="room_available">{t('common.listingTypes.room_available')}</option>
+                  <option value="looking_for_room">{t('common.listingTypes.looking_for_room')}</option>
+                  <option value="looking_together">{t('common.listingTypes.looking_together')}</option>
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-semibold text-white/60 mb-1 uppercase tracking-wider">Cinsiyet Tercihi</label>
+                <label className="block text-xs font-semibold text-white/60 mb-1 uppercase tracking-wider">{t('listings.filters.gender')}</label>
                 <select value={filters.gender} onChange={(e) => setFilters({ ...filters, gender: e.target.value })} className="input-field py-2 text-sm">
-                  <option value="all">Fark Etmez</option>
-                  <option value="male">Erkek</option>
-                  <option value="female">Kadın</option>
+                  <option value="all">{t('common.gender.all')}</option>
+                  <option value="male">{t('common.gender.male')}</option>
+                  <option value="female">{t('common.gender.female')}</option>
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-semibold text-white/60 mb-1 uppercase tracking-wider">Min Bütçe (₺)</label>
+                <label className="block text-xs font-semibold text-white/60 mb-1 uppercase tracking-wider">{t('listings.filters.minBudget')}</label>
                 <input type="number" placeholder="0" value={filters.minBudget}
                   onChange={(e) => setFilters({ ...filters, minBudget: e.target.value })}
                   className="input-field py-2 text-sm" />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-white/60 mb-1 uppercase tracking-wider">En Geç Taşınma</label>
+                <label className="block text-xs font-semibold text-white/60 mb-1 uppercase tracking-wider">{t('listings.filters.moveInDate')}</label>
                 <input type="date" value={filters.moveInDate}
                   onChange={(e) => setFilters({ ...filters, moveInDate: e.target.value })}
                   className="input-field py-2 text-sm" />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-white/60 mb-1 uppercase tracking-wider">Min Puan</label>
+                <label className="block text-xs font-semibold text-white/60 mb-1 uppercase tracking-wider">{t('listings.filters.minScore')}</label>
                 <input type="number" placeholder="0" min="0" max="1000" value={filters.minScore}
                   onChange={(e) => setFilters({ ...filters, minScore: e.target.value })}
                   className="input-field py-2 text-sm" />
@@ -176,12 +172,12 @@ export default function ListingsPage() {
                 <input id="verifiedOnly" type="checkbox" checked={filters.verifiedOnly}
                   onChange={(e) => setFilters({ ...filters, verifiedOnly: e.target.checked })}
                   className="accent-secondary" />
-                <label htmlFor="verifiedOnly" className="text-sm font-medium text-white/60 cursor-pointer">Sadece Doğrulanmış</label>
+                <label htmlFor="verifiedOnly" className="text-sm font-medium text-white/60 cursor-pointer">{t('listings.filters.verifiedOnly')}</label>
               </div>
               <div className="flex items-end">
                 <button onClick={() => setFilters({ city: 'istanbul', district: '', minBudget: '', maxBudget: '', type: 'all', gender: 'all', moveInDate: '', verifiedOnly: false, minScore: '' })}
                   className="text-sm text-white/40 hover:text-white/70 underline">
-                  Filtreleri Temizle
+                  {t('common.actions.clearFilters')}
                 </button>
               </div>
             </div>
@@ -192,16 +188,17 @@ export default function ListingsPage() {
         {filtered.length === 0 ? (
           <div className="text-center py-24">
             <div className="text-6xl mb-4">🏠</div>
-            <h3 className="text-xl font-semibold text-white mb-2">Uygun ilan bulunamadı</h3>
-            <p className="text-white/40 mb-6">Filtrelerini değiştirerek tekrar dene</p>
+            <h3 className="text-xl font-semibold text-white mb-2">{t('listings.empty.title')}</h3>
+            <p className="text-white/40 mb-6">{t('listings.empty.description')}</p>
             <button onClick={() => setFilters({ city: 'istanbul', district: '', minBudget: '', maxBudget: '', type: 'all', gender: 'all', moveInDate: '', verifiedOnly: false, minScore: '' })}
-              className="btn-primary">Filtreleri Temizle</button>
+              className="btn-primary">{t('common.actions.clearFilters')}</button>
           </div>
         ) : (
           <div className="grid lg:grid-cols-2 gap-5">
             {filtered.map((listing) => {
               const band = scoreBand(listing.ownerScore);
               const isFav = favorites.has(listing.id);
+              const listingDate = new Date(listing.moveInDate).toLocaleDateString(locale === 'tr' ? 'tr-TR' : 'en-US', { day: 'numeric', month: 'short' });
               return (
                 <Link key={listing.id} href={`/listings/${listing.id}`}
                   className="border border-white/10 rounded-xl overflow-hidden hover:border-secondary/30 transition group bg-zinc-900">
@@ -214,37 +211,37 @@ export default function ListingsPage() {
                         <Heart size={18} fill={isFav ? 'currentColor' : 'none'} />
                       </button>
                       <span className="absolute top-3 left-3 text-xs font-semibold bg-black/60 text-white px-2 py-1 rounded-full">
-                        {typeLabels[listing.type]}
+                        {t(`common.listingTypes.${listing.type}`)}
                       </span>
                     </div>
 
                     {/* Content */}
                     <div className="p-5 flex-1 flex flex-col">
-                      <h3 className="font-semibold text-base text-white mb-2 line-clamp-2">{listing.title}</h3>
+                      <h3 className="font-semibold text-base text-white mb-2 line-clamp-2">{t(`listings.mock.${listing.id}.title`)}</h3>
                       <div className="space-y-1.5 mb-3 text-sm text-white/50">
                         <div className="flex items-center gap-2">
                           <MapPin size={14} className="text-secondary flex-shrink-0" />
-                          {listing.district} / {listing.neighborhood}
+                          {t(`listings.mock.${listing.id}.district`)} / {t(`listings.mock.${listing.id}.neighborhood`)}
                         </div>
                         <div className="flex items-center gap-2">
                           <Users size={14} className="text-white/40 flex-shrink-0" />
-                          {listing.residents.current}/{listing.residents.total} kişi · Giriş: {new Date(listing.moveInDate).toLocaleDateString('tr-TR', { day: 'numeric', month: 'short' })}
+                          {listing.residents.current}/{listing.residents.total} {t('common.units.person')} · {t('listings.card.moveIn', { date: listingDate })}
                         </div>
                       </div>
                       <div className="flex flex-wrap gap-1.5 mb-4">
                         {listing.amenities.slice(0, 3).map((a, i) => (
-                          <span key={i} className="text-xs px-2 py-0.5 bg-white/5 text-white/50 rounded-full border border-white/10">{a}</span>
+                          <span key={i} className="text-xs px-2 py-0.5 bg-white/5 text-white/50 rounded-full border border-white/10">{t(`common.amenities.${a}`)}</span>
                         ))}
                       </div>
                       <div className="border-t border-white/10 pt-3 flex items-center justify-between mt-auto">
                         <div>
-                          <p className="text-xl font-bold text-secondary">₺{listing.monthlyRent.toLocaleString('tr-TR')}<span className="text-sm font-normal text-white/40">/ay</span></p>
+                          <p className="text-xl font-bold text-secondary">₺{listing.monthlyRent.toLocaleString(locale === 'tr' ? 'tr-TR' : 'en-US')}<span className="text-sm font-normal text-white/40">{t('listings.card.perMonth')}</span></p>
                           <div className="flex items-center gap-2 mt-1">
-                            <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${band.color}`}>{band.label} {listing.ownerScore}</span>
-                            {listing.ownerVerified && <span className="text-xs text-secondary font-semibold">✓ Doğrulanmış</span>}
+                            <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${band.color}`}>{t(`common.score.${band.labelKey}`)} {listing.ownerScore}</span>
+                            {listing.ownerVerified && <span className="text-xs text-secondary font-semibold">{t('listings.card.verified')}</span>}
                           </div>
                         </div>
-                        <span className="text-sm text-white/60">{listing.owner}</span>
+                        <span className="text-sm text-white/60">{t(`listings.mock.${listing.id}.owner`)}</span>
                       </div>
                     </div>
                   </div>

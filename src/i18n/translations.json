@@ -20,6 +20,43 @@
         "medium": "Orta",
         "good": "İyi",
         "gold": "Altın"
+      },
+      "actions": {
+        "search": "Ara",
+        "clearFilters": "Filtreleri Temizle",
+        "back": "Geri Dön",
+        "continue": "Devam Et"
+      },
+      "units": {
+        "person": "kişi",
+        "month": "ay"
+      },
+      "cities": {
+        "istanbul": "İstanbul",
+        "ankara": "Ankara",
+        "izmir": "İzmir"
+      },
+      "listingTypes": {
+        "room_available": "Oda Var",
+        "looking_for_room": "Oda Arıyorum",
+        "looking_together": "Birlikte Ara"
+      },
+      "gender": {
+        "all": "Fark Etmez",
+        "any": "Fark Etmez",
+        "male": "Erkek",
+        "female": "Kadın",
+        "mixed": "Karışık"
+      },
+      "amenities": {
+        "furnished": "Mobilyalı",
+        "internet": "İnternet",
+        "washing_machine": "Çamaşır Makinesi",
+        "balcony": "Balkon",
+        "ac": "Klima",
+        "heating": "Isıtma",
+        "kitchen": "Mutfak",
+        "parking": "Otopark"
       }
     },
     "home": {
@@ -103,6 +140,172 @@
         "profile": "Profil"
       },
       "logout": "Çıkış Yap"
+    },
+    "listings": {
+      "title": "İlanları Keşfet",
+      "found": "{count} ilan bulundu",
+      "filters": {
+        "city": "Şehir",
+        "maxBudget": "Max Bütçe (₺)",
+        "sort": "Sıralama",
+        "filters": "Filtreler",
+        "type": "İlan Türü",
+        "all": "Tümü",
+        "gender": "Cinsiyet Tercihi",
+        "minBudget": "Min Bütçe (₺)",
+        "moveInDate": "En Geç Taşınma",
+        "minScore": "Min Puan",
+        "verifiedOnly": "Sadece Doğrulanmış"
+      },
+      "sort": {
+        "newest": "En Yeni",
+        "price_asc": "Fiyat (Düşük→Yüksek)",
+        "price_desc": "Fiyat (Yüksek→Düşük)",
+        "score": "Doğrulama Seviyesi"
+      },
+      "empty": {
+        "title": "Uygun ilan bulunamadı",
+        "description": "Filtrelerini değiştirerek tekrar dene"
+      },
+      "card": {
+        "moveIn": "Giriş: {date}",
+        "verified": "✓ Doğrulanmış",
+        "perMonth": "/ay"
+      },
+      "mock": {
+        "1": {
+          "title": "Beşiktaş'ta 2+1 Ev — Arkadaş Aranıyor",
+          "city": "İstanbul",
+          "district": "Beşiktaş",
+          "neighborhood": "Ortaköy",
+          "owner": "Ahmet Yılmaz"
+        },
+        "2": {
+          "title": "Şişli'de Oda Arıyorum",
+          "city": "İstanbul",
+          "district": "Şişli",
+          "neighborhood": "Merkez",
+          "owner": "Zeynep Kaya"
+        },
+        "3": {
+          "title": "Taksim'de Güzel Daire — 3 Kişilik",
+          "city": "İstanbul",
+          "district": "Beyoğlu",
+          "neighborhood": "Taksim",
+          "owner": "Ali Demir"
+        },
+        "4": {
+          "title": "Kadıköy'de Arkadaş Arıyorum",
+          "city": "İstanbul",
+          "district": "Kadıköy",
+          "neighborhood": "Moda",
+          "owner": "Selin Çiçek"
+        },
+        "5": {
+          "title": "Ataşehir İçin Ev Arkadaşı Arıyorum",
+          "city": "İstanbul",
+          "district": "Ataşehir",
+          "neighborhood": "Ataşehir",
+          "owner": "Mert Yıldız"
+        }
+      }
+    },
+    "createListing": {
+      "title": "Yeni İlan Oluştur",
+      "steps": {
+        "typeTitle": "İlan Türü Seç",
+        "detailsTitle": "İlan Detayları",
+        "amenitiesTitle": "Evinizin Özellikleri",
+        "photosTitle": "Fotoğraf Yükle"
+      },
+      "types": {
+        "room_available": {
+          "description": "Mevcut ev/dairede arkadaş arıyorum"
+        },
+        "looking_for_room": {
+          "description": "Var olan bir eve katılmak istiyorum"
+        },
+        "looking_together": {
+          "description": "Yeni ev için arkadaş bulup beraber kirala"
+        }
+      },
+      "fields": {
+        "title": "İlan Başlığı",
+        "description": "İlan Açıklaması",
+        "city": "Şehir",
+        "district": "İlçe",
+        "neighborhood": "Mahalle",
+        "monthlyRent": "Aylık Kira",
+        "perPersonRent": "Kişi Başı Kira",
+        "moveInDate": "Giriş Tarihi",
+        "residents": "Yaşayan Kişi Sayısı",
+        "currentResidents": "Şu Anda",
+        "totalResidents": "Toplam Olacak",
+        "smoking": "Sigara İçme Yasak",
+        "pets": "Evcil Hayvan Yasak"
+      },
+      "placeholders": {
+        "title": "Beşiktaş'ta 2+1 ev - Arkadaş Aranıyor",
+        "description": "Evinin ve aradığın arkadaş profilinin detaylarını yaz...",
+        "district": "Beşiktaş",
+        "neighborhood": "Ortaköy",
+        "select": "Seç"
+      },
+      "photos": {
+        "drop": "Fotoğrafları Sürükle ve Bırak",
+        "select": "Veya bilgisayarından seç (En fazla 10 fotoğraf)"
+      },
+      "actions": {
+        "uploadPhotos": "Fotoğrafları Yükle",
+        "create": "İlan Oluştur"
+      }
+    },
+    "listingDetail": {
+      "back": "İlanlara Dön",
+      "metrics": {
+        "rentPerPerson": "Kişi Başı / Ay",
+        "residents": "Mevcut / Toplam Kişi",
+        "moveIn": "Giriş Tarihi"
+      },
+      "sections": {
+        "amenities": "Ev Özellikleri",
+        "rules": "Ev Kuralları",
+        "owner": "İlan Sahibi"
+      },
+      "rules": {
+        "smokingAllowed": "🚬 Sigara İçilebilir",
+        "smokingForbidden": "🚭 Sigara Yasak",
+        "petsAllowed": "🐾 Evcil Hayvan Uygun",
+        "petsForbidden": "🚫 Evcil Hayvan Yasak",
+        "quietHours": "🌙 Sessiz Saat: {start} – {end}",
+        "gender": "👥 Cinsiyet: {gender}"
+      },
+      "cta": {
+        "perMonth": "/ay",
+        "totalRent": "Toplam kira: ₺{amount}",
+        "message": "Mesaj Gönder",
+        "favorite": "Favorilere Ekle",
+        "validUntil": "İlan {date} tarihine kadar geçerli"
+      },
+      "owner": {
+        "ageOccupation": "{age} yaş · {occupation}",
+        "memberSince": "{date} üye"
+      },
+      "mock": {
+        "listing": {
+          "title": "Beşiktaş'ta 2+1 Ev — Arkadaş Aranıyor",
+          "description": "Ortaköy'de deniz manzaralı, 2+1 ferah dairede ev arkadaşı arıyoruz. Ev tamamen mobilyalı, internet dahil. Temiz, saygılı ve sosyal biri arıyoruz. Hafta sonları evde olabilirsiniz, misafir kabulü önceden haber vermek koşuluyla uygun.",
+          "city": "İstanbul",
+          "district": "Beşiktaş",
+          "neighborhood": "Ortaköy"
+        },
+        "owner": {
+          "name": "Ahmet Yılmaz",
+          "occupation": "Yazılım Mühendisi",
+          "city": "İstanbul",
+          "bio": "Çalışkan, temiz ve saygılı birisiyim. Evde düzen önemli."
+        }
+      }
     }
   },
   "en": {
@@ -126,6 +329,43 @@
         "medium": "Medium",
         "good": "Good",
         "gold": "Gold"
+      },
+      "actions": {
+        "search": "Search",
+        "clearFilters": "Clear Filters",
+        "back": "Go Back",
+        "continue": "Continue"
+      },
+      "units": {
+        "person": "people",
+        "month": "month"
+      },
+      "cities": {
+        "istanbul": "Istanbul",
+        "ankara": "Ankara",
+        "izmir": "Izmir"
+      },
+      "listingTypes": {
+        "room_available": "Room Available",
+        "looking_for_room": "Looking for Room",
+        "looking_together": "Search Together"
+      },
+      "gender": {
+        "all": "Any",
+        "any": "Any",
+        "male": "Male",
+        "female": "Female",
+        "mixed": "Mixed"
+      },
+      "amenities": {
+        "furnished": "Furnished",
+        "internet": "Internet",
+        "washing_machine": "Washing Machine",
+        "balcony": "Balcony",
+        "ac": "Air Conditioning",
+        "heating": "Heating",
+        "kitchen": "Kitchen",
+        "parking": "Parking"
       }
     },
     "home": {
@@ -209,6 +449,172 @@
         "profile": "Profile"
       },
       "logout": "Log Out"
+    },
+    "listings": {
+      "title": "Explore Listings",
+      "found": "{count} listings found",
+      "filters": {
+        "city": "City",
+        "maxBudget": "Max Budget (₺)",
+        "sort": "Sort",
+        "filters": "Filters",
+        "type": "Listing Type",
+        "all": "All",
+        "gender": "Gender Preference",
+        "minBudget": "Min Budget (₺)",
+        "moveInDate": "Latest Move-in",
+        "minScore": "Min Score",
+        "verifiedOnly": "Verified Only"
+      },
+      "sort": {
+        "newest": "Newest",
+        "price_asc": "Price (Low→High)",
+        "price_desc": "Price (High→Low)",
+        "score": "Verification Level"
+      },
+      "empty": {
+        "title": "No matching listings found",
+        "description": "Try changing your filters"
+      },
+      "card": {
+        "moveIn": "Move-in: {date}",
+        "verified": "✓ Verified",
+        "perMonth": "/mo"
+      },
+      "mock": {
+        "1": {
+          "title": "2+1 Home in Besiktas — Looking for a Flatmate",
+          "city": "Istanbul",
+          "district": "Besiktas",
+          "neighborhood": "Ortakoy",
+          "owner": "Ahmet Yilmaz"
+        },
+        "2": {
+          "title": "Looking for a Room in Sisli",
+          "city": "Istanbul",
+          "district": "Sisli",
+          "neighborhood": "Center",
+          "owner": "Zeynep Kaya"
+        },
+        "3": {
+          "title": "Nice Apartment in Taksim — For 3 People",
+          "city": "Istanbul",
+          "district": "Beyoglu",
+          "neighborhood": "Taksim",
+          "owner": "Ali Demir"
+        },
+        "4": {
+          "title": "Looking for a Flatmate in Kadikoy",
+          "city": "Istanbul",
+          "district": "Kadikoy",
+          "neighborhood": "Moda",
+          "owner": "Selin Cicek"
+        },
+        "5": {
+          "title": "Looking for a Flatmate for Atasehir",
+          "city": "Istanbul",
+          "district": "Atasehir",
+          "neighborhood": "Atasehir",
+          "owner": "Mert Yildiz"
+        }
+      }
+    },
+    "createListing": {
+      "title": "Create New Listing",
+      "steps": {
+        "typeTitle": "Choose Listing Type",
+        "detailsTitle": "Listing Details",
+        "amenitiesTitle": "Home Features",
+        "photosTitle": "Upload Photos"
+      },
+      "types": {
+        "room_available": {
+          "description": "I am looking for a flatmate for my current home"
+        },
+        "looking_for_room": {
+          "description": "I want to join an existing home"
+        },
+        "looking_together": {
+          "description": "Find a flatmate and rent a new home together"
+        }
+      },
+      "fields": {
+        "title": "Listing Title",
+        "description": "Listing Description",
+        "city": "City",
+        "district": "District",
+        "neighborhood": "Neighborhood",
+        "monthlyRent": "Monthly Rent",
+        "perPersonRent": "Rent per Person",
+        "moveInDate": "Move-in Date",
+        "residents": "Number of Residents",
+        "currentResidents": "Current",
+        "totalResidents": "Total",
+        "smoking": "No Smoking",
+        "pets": "No Pets"
+      },
+      "placeholders": {
+        "title": "2+1 home in Besiktas - Looking for a flatmate",
+        "description": "Write the details of your home and the flatmate profile you are looking for...",
+        "district": "Besiktas",
+        "neighborhood": "Ortakoy",
+        "select": "Select"
+      },
+      "photos": {
+        "drop": "Drag and Drop Photos",
+        "select": "Or choose from your computer (up to 10 photos)"
+      },
+      "actions": {
+        "uploadPhotos": "Upload Photos",
+        "create": "Create Listing"
+      }
+    },
+    "listingDetail": {
+      "back": "Back to Listings",
+      "metrics": {
+        "rentPerPerson": "Per Person / Month",
+        "residents": "Current / Total People",
+        "moveIn": "Move-in Date"
+      },
+      "sections": {
+        "amenities": "Home Features",
+        "rules": "House Rules",
+        "owner": "Listing Owner"
+      },
+      "rules": {
+        "smokingAllowed": "🚬 Smoking Allowed",
+        "smokingForbidden": "🚭 No Smoking",
+        "petsAllowed": "🐾 Pets Allowed",
+        "petsForbidden": "🚫 No Pets",
+        "quietHours": "🌙 Quiet Hours: {start} – {end}",
+        "gender": "👥 Gender: {gender}"
+      },
+      "cta": {
+        "perMonth": "/mo",
+        "totalRent": "Total rent: ₺{amount}",
+        "message": "Send Message",
+        "favorite": "Add to Favorites",
+        "validUntil": "Listing is valid until {date}"
+      },
+      "owner": {
+        "ageOccupation": "{age} years · {occupation}",
+        "memberSince": "Member since {date}"
+      },
+      "mock": {
+        "listing": {
+          "title": "2+1 Home in Besiktas — Looking for a Flatmate",
+          "description": "We are looking for a flatmate for a spacious furnished 2+1 apartment with a sea view in Ortakoy. Internet is included. We are looking for someone clean, respectful, and social. Staying home on weekends is fine, and guests are welcome with prior notice.",
+          "city": "Istanbul",
+          "district": "Besiktas",
+          "neighborhood": "Ortakoy"
+        },
+        "owner": {
+          "name": "Ahmet Yilmaz",
+          "occupation": "Software Engineer",
+          "city": "Istanbul",
+          "bio": "I am hardworking, clean, and respectful. Keeping the home organized matters to me."
+        }
+      }
     }
   }
 }
