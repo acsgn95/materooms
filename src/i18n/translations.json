@@ -1,0 +1,226 @@
+{
+  "tr": {
+    "common": {
+      "brand": "MateRooms",
+      "language": "Dil",
+      "languages": {
+        "tr": "TR",
+        "en": "EN"
+      },
+      "badges": {
+        "phone_verified": "Telefon",
+        "id_verified": "Kimlik",
+        "face_verified": "Yüz",
+        "photo_verified": "Fotoğraf",
+        "clean_record": "Temiz Sicil"
+      },
+      "score": {
+        "title": "Flatmate Puanı",
+        "low": "Düşük",
+        "medium": "Orta",
+        "good": "İyi",
+        "gold": "Altın"
+      }
+    },
+    "home": {
+      "nav": {
+        "features": "Özellikler",
+        "how": "Nasıl Çalışır",
+        "business": "Kurumsal",
+        "login": "Giriş Yap",
+        "register": "Kaydol"
+      },
+      "hero": {
+        "eyebrow": "LIVE SHARED",
+        "title": "Kiralamada yenilikçi deneyim",
+        "description": "Doğrulanmış kimlik, güvenli ödemeler ve objektif puanlama sistemiyle Türkiye'nin en güvenilir flatmate platformu.",
+        "primaryCta": "Hemen Başla",
+        "secondaryCta": "Keşfet"
+      },
+      "stats": [
+        { "value": "340%", "label": "Kira Artışı (3 Yıl)" },
+        { "value": "1000+", "label": "İlk Kullanıcı" },
+        { "value": "3", "label": "Büyük Şehir" },
+        { "value": "%100", "label": "Doğrulanmış Üye" }
+      ],
+      "features": {
+        "eyebrow": "Neden MateRooms?",
+        "title": "Güven, tüm kararların merkezinde",
+        "items": [
+          {
+            "title": "Doğrulanmış Kimlik",
+            "description": "Telefon, TC Kimlik, yüz eşleştirmesi ve suç kaydı kontrolü ile çok katmanlı KYC."
+          },
+          {
+            "title": "Güvenli Ödemeler",
+            "description": "İyzico altyapısıyla kira ve gider ödemeleri. Otomatik komisyon, anında transfer."
+          },
+          {
+            "title": "Flatmate Puanı",
+            "description": "Ödeme davranışından türetilen, manipüle edilemeyen taşınabilir itibar skoru."
+          }
+        ]
+      },
+      "how": {
+        "eyebrow": "Nasıl Çalışır?",
+        "title": "Üç adımda başla",
+        "steps": [
+          {
+            "step": "01",
+            "title": "Kaydol & Doğrula",
+            "description": "Telefon numaranla kaydol. TC kimliğini yükle, profilini tamamla."
+          },
+          {
+            "step": "02",
+            "title": "İlan Oluştur veya Ara",
+            "description": "Üç ilan tipinden birini seç. Filtrelerle ideal eşleşmeyi bul."
+          },
+          {
+            "step": "03",
+            "title": "Güvenle Taşın",
+            "description": "Doğrulanmış profiller, puan geçmişi ve güvenli ödeme altyapısıyla huzurla başla."
+          }
+        ]
+      },
+      "contact": {
+        "title": "Bize Ulaşın",
+        "description": "Sorularınız için bize ulaşın",
+        "cta": "Platforma Katıl"
+      },
+      "footer": {
+        "privacy": "Gizlilik",
+        "terms": "Kullanıcı Sözleşmesi",
+        "business": "Kurumsal",
+        "copyright": "© 2026 MateRooms"
+      }
+    },
+    "dashboardHeader": {
+      "nav": {
+        "dashboard": "Dashboard",
+        "listings": "İlanlar",
+        "createListing": "İlan Oluştur",
+        "messages": "Mesajlar",
+        "payments": "Ödemeler",
+        "expenses": "Giderler",
+        "score": "Puanım",
+        "favorites": "Favoriler",
+        "verify": "Doğrulama",
+        "notifications": "Bildirimler",
+        "profile": "Profil"
+      },
+      "logout": "Çıkış Yap"
+    }
+  },
+  "en": {
+    "common": {
+      "brand": "MateRooms",
+      "language": "Language",
+      "languages": {
+        "tr": "TR",
+        "en": "EN"
+      },
+      "badges": {
+        "phone_verified": "Phone",
+        "id_verified": "ID",
+        "face_verified": "Face",
+        "photo_verified": "Photo",
+        "clean_record": "Clean Record"
+      },
+      "score": {
+        "title": "Flatmate Score",
+        "low": "Low",
+        "medium": "Medium",
+        "good": "Good",
+        "gold": "Gold"
+      }
+    },
+    "home": {
+      "nav": {
+        "features": "Features",
+        "how": "How It Works",
+        "business": "Business",
+        "login": "Log In",
+        "register": "Sign Up"
+      },
+      "hero": {
+        "eyebrow": "LIVE SHARED",
+        "title": "A smarter rental experience",
+        "description": "Turkey's trusted flatmate platform with verified identity, secure payments, and objective scoring.",
+        "primaryCta": "Get Started",
+        "secondaryCta": "Explore"
+      },
+      "stats": [
+        { "value": "340%", "label": "Rent Increase (3 Years)" },
+        { "value": "1000+", "label": "First Users" },
+        { "value": "3", "label": "Major Cities" },
+        { "value": "100%", "label": "Verified Members" }
+      ],
+      "features": {
+        "eyebrow": "Why MateRooms?",
+        "title": "Trust sits at the center of every decision",
+        "items": [
+          {
+            "title": "Verified Identity",
+            "description": "Multi-layer KYC with phone, national ID, face matching, and record checks."
+          },
+          {
+            "title": "Secure Payments",
+            "description": "Rent and shared expenses through Iyzico infrastructure, with automatic commission and instant transfers."
+          },
+          {
+            "title": "Flatmate Score",
+            "description": "A portable reputation score derived from payment behavior and resistant to manipulation."
+          }
+        ]
+      },
+      "how": {
+        "eyebrow": "How It Works",
+        "title": "Start in three steps",
+        "steps": [
+          {
+            "step": "01",
+            "title": "Sign Up & Verify",
+            "description": "Register with your phone number, upload your ID, and complete your profile."
+          },
+          {
+            "step": "02",
+            "title": "Create or Search Listings",
+            "description": "Choose one of three listing types and use filters to find the right match."
+          },
+          {
+            "step": "03",
+            "title": "Move In With Confidence",
+            "description": "Start with verified profiles, score history, and secure payment infrastructure."
+          }
+        ]
+      },
+      "contact": {
+        "title": "Contact Us",
+        "description": "Reach out to us for your questions",
+        "cta": "Join the Platform"
+      },
+      "footer": {
+        "privacy": "Privacy",
+        "terms": "Terms of Use",
+        "business": "Business",
+        "copyright": "© 2026 MateRooms"
+      }
+    },
+    "dashboardHeader": {
+      "nav": {
+        "dashboard": "Dashboard",
+        "listings": "Listings",
+        "createListing": "Create Listing",
+        "messages": "Messages",
+        "payments": "Payments",
+        "expenses": "Expenses",
+        "score": "My Score",
+        "favorites": "Favorites",
+        "verify": "Verification",
+        "notifications": "Notifications",
+        "profile": "Profile"
+      },
+      "logout": "Log Out"
+    }
+  }
+}
