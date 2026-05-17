@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { DashboardHeader } from '@/components/common/DashboardHeader';
-import { VerificationBadges, ScoreBadge } from '@/components/common/DashboardHeader';
+import { VerificationBadges } from '@/components/common/DashboardHeader';
 import { Camera, Save, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 
@@ -29,7 +29,6 @@ export default function ProfilePage() {
   });
 
   const verificationBadges = ['phone_verified', 'id_verified'];
-  const flatmateScore = 720;
 
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
@@ -83,14 +82,6 @@ export default function ProfilePage() {
               </Link>
             </div>
 
-            {/* Score */}
-            <div className="card text-center">
-              <h3 className="font-semibold text-white mb-3">Flatmate Puanı</h3>
-              <ScoreBadge score={flatmateScore} />
-              <Link href="/scores" className="block mt-3 text-secondary text-sm font-semibold hover:underline">
-                → Puan detayları
-              </Link>
-            </div>
           </div>
 
           {/* Right — Edit Form */}

@@ -18,7 +18,6 @@ const NAV_LINKS = [
   { href: '/messages', labelKey: 'messages', badge: MOCK_UNREAD_MESSAGES },
   { href: '/payments', labelKey: 'payments' },
   { href: '/expenses', labelKey: 'expenses' },
-  { href: '/scores', labelKey: 'score' },
   { href: '/favorites', labelKey: 'favorites' },
 ];
 

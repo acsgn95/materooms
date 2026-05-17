@@ -1,12 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { DashboardHeader, ScoreBadge, VerificationBadges } from '@/components/common/DashboardHeader';
-import { Plus, MessageSquare, Heart, TrendingUp, RefreshCw, AlertTriangle, ArrowRight } from 'lucide-react';
+import { DashboardHeader } from '@/components/common/DashboardHeader';
+import { Plus, MessageSquare, Heart, RefreshCw, AlertTriangle } from 'lucide-react';
 import Link from 'next/link';
 
 export default function DashboardPage() {
-  const user = { name: 'Ahmet Yılmaz', phone: '+90 555 123 45 67', city: 'İstanbul', verificationBadges: ['phone_verified', 'id_verified'], flatmateScore: 720 };
+  const user = { name: 'Ahmet Yılmaz', phone: '+90 555 123 45 67', city: 'İstanbul' };
 
   const [listings, setListings] = useState([
     { id: '1', title: "Beşiktaş'ta 2+1 Ev — Arkadaş Aranıyor", district: 'Beşiktaş', monthlyRent: { full: 15000, perPerson: 7500 }, residents: { current: 1, total: 2 }, messages: 3, views: 47, expiresAt: '2026-05-18' },
@@ -45,12 +45,11 @@ export default function DashboardPage() {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
           {[
             { label: 'Aktif İlanlar', value: listings.length, icon: <Plus size={20} />, color: 'text-secondary' },
             { label: 'Yeni Mesajlar', value: recentMessages.filter(m => m.unread).length, icon: <MessageSquare size={20} />, color: 'text-secondary' },
             { label: 'Favoriler', value: 5, icon: <Heart size={20} />, color: 'text-secondary' },
-            { label: 'Puanım', value: user.flatmateScore, icon: <TrendingUp size={20} />, color: 'text-secondary' },
           ].map((s) => (
             <div key={s.label} className="card">
               <div className="flex items-center justify-between mb-3">
@@ -72,12 +71,6 @@ export default function DashboardPage() {
                   <p className="text-white/40 text-sm">{user.phone}</p>
                 </div>
                 <Link href="/profile" className="btn-outline text-sm px-4 py-2">Düzenle</Link>
-              </div>
-              <VerificationBadges badges={user.verificationBadges} />
-              <div className="mt-4 pt-4 border-t border-white/10">
-                <Link href="/verify" className="text-secondary text-sm hover:underline flex items-center gap-1">
-                  Daha fazla doğrula <ArrowRight size={14} />
-                </Link>
               </div>
             </div>
 
@@ -115,13 +108,6 @@ export default function DashboardPage() {
           </div>
 
           <div className="space-y-6">
-            {/* Score */}
-            <div className="card text-center">
-              <p className="text-white/40 text-xs uppercase tracking-wider mb-4">Flatmate Puanı</p>
-              <ScoreBadge score={user.flatmateScore} />
-              <Link href="/scores" className="block mt-4 text-secondary text-sm hover:underline">Detaylar →</Link>
-            </div>
-
             {/* Messages */}
             <div className="card">
               <div className="flex justify-between items-center mb-4">
