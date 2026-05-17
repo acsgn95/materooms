@@ -69,9 +69,9 @@ export default function RegisterPage() {
               <div>
                 <label className="block text-xs font-semibold text-white/60 mb-2 uppercase tracking-wider">Telefon</label>
                 <div className="relative">
-                  <Phone className="absolute left-3 top-3.5 text-white/30" size={18} />
+                  <Phone className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-white/30" size={18} />
                   <input type="tel" placeholder="+90 5XX XXX XXXX" value={phone}
-                    onChange={(e) => setPhone(e.target.value)} className="input-field pl-10" required />
+                    onChange={(e) => setPhone(e.target.value)} className="input-field !pl-14" required />
                 </div>
               </div>
               <button type="submit" disabled={loading} className="btn-primary w-full disabled:opacity-40">
