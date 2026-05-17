@@ -50,10 +50,10 @@ export default function ListingDetailPage() {
   const ownerOccupation = t('listingDetail.mock.owner.occupation');
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-dvh bg-black">
       <DashboardHeader />
 
-      <main className="container-main py-12">
+      <main className="container-main py-6 sm:py-12">
         <Link href="/listings" className="flex items-center gap-2 text-white/40 hover:text-white mb-8 transition">
           <ArrowLeft size={20} />
           {t('listingDetail.back')}
@@ -63,12 +63,12 @@ export default function ListingDetailPage() {
           {/* Left — Main Content */}
           <div className="lg:col-span-2 space-y-6">
             {/* Photo Gallery */}
-            <div className="grid grid-cols-4 gap-2 h-64">
-              <div className="col-span-2 row-span-2 bg-zinc-800 rounded-xl flex items-center justify-center text-8xl">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 h-auto sm:h-64">
+              <div className="col-span-2 sm:row-span-2 min-h-48 sm:min-h-0 bg-zinc-800 rounded-xl flex items-center justify-center text-7xl sm:text-8xl">
                 {listing.photos[0]}
               </div>
               {listing.photos.slice(1).map((p, i) => (
-                <div key={i} className="bg-zinc-800 rounded-xl flex items-center justify-center text-4xl">
+                <div key={i} className="min-h-24 sm:min-h-0 bg-zinc-800 rounded-xl flex items-center justify-center text-3xl sm:text-4xl">
                   {p}
                 </div>
               ))}
@@ -76,13 +76,13 @@ export default function ListingDetailPage() {
 
             {/* Title & Actions */}
             <div className="card">
-              <div className="flex justify-between items-start mb-4">
-                <div>
+              <div className="flex flex-col gap-4 mb-4 sm:flex-row sm:justify-between sm:items-start">
+                <div className="min-w-0">
                   <span className="text-xs font-semibold text-secondary bg-secondary/10 px-2 py-1 rounded-full mb-2 inline-block">
                     {t(`common.listingTypes.${listing.type}`)}
                   </span>
-                  <h1 className="text-3xl font-serif font-light text-white">{t('listingDetail.mock.listing.title')}</h1>
-                  <div className="flex items-center gap-2 text-white/40 mt-2">
+                  <h1 className="text-2xl sm:text-3xl font-serif font-light text-white">{t('listingDetail.mock.listing.title')}</h1>
+                  <div className="flex items-start gap-2 text-white/40 mt-2 text-sm sm:items-center">
                     <MapPin size={16} className="text-secondary" />
                     {t('listingDetail.mock.listing.city')} / {t('listingDetail.mock.listing.district')} / {t('listingDetail.mock.listing.neighborhood')}
                   </div>
@@ -100,7 +100,7 @@ export default function ListingDetailPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-3 gap-4 py-4 border-y border-white/10">
+              <div className="grid grid-cols-1 gap-4 py-4 border-y border-white/10 sm:grid-cols-3">
                 <div className="text-center">
                   <p className="text-2xl font-bold text-secondary">
                     ₺{listing.monthlyRent.perPerson?.toLocaleString(dateLocale)}
@@ -129,7 +129,7 @@ export default function ListingDetailPage() {
             {/* Amenities */}
             <div className="card">
               <h2 className="text-xl font-semibold text-white mb-4">{t('listingDetail.sections.amenities')}</h2>
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
                 {listing.amenities.map((a) => {
                   const config = amenityLabels[a];
                   return config ? (
@@ -145,7 +145,7 @@ export default function ListingDetailPage() {
             {/* House Rules */}
             <div className="card">
               <h2 className="text-xl font-semibold text-white mb-4">{t('listingDetail.sections.rules')}</h2>
-              <div className="grid grid-cols-2 gap-3 text-sm">
+              <div className="grid grid-cols-1 gap-3 text-sm sm:grid-cols-2">
                 <div className={`flex items-center gap-2 p-3 rounded-lg ${listing.houseRules.smoking ? 'bg-red-500/10 text-red-400' : 'bg-secondary/10 text-secondary'}`}>
                   {listing.houseRules.smoking ? t('listingDetail.rules.smokingAllowed') : t('listingDetail.rules.smokingForbidden')}
                 </div>
@@ -165,7 +165,7 @@ export default function ListingDetailPage() {
           {/* Right — Owner & CTA */}
           <div className="space-y-6">
             {/* CTA */}
-            <div className="card sticky top-24">
+            <div className="card lg:sticky lg:top-24">
               <div className="text-center mb-6">
                 <p className="text-3xl font-bold text-secondary">
                   ₺{listing.monthlyRent.perPerson?.toLocaleString(dateLocale)}

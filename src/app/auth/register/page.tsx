@@ -111,12 +111,12 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen bg-black flex flex-col">
+    <div className="min-h-dvh bg-black flex flex-col">
       <div className="h-0.5 bg-secondary" />
 
-      <div className="flex-1 flex items-center justify-center p-4">
-        <div className="w-full max-w-sm">
-          <Link href="/" className="block text-center text-white font-bold tracking-[0.28em] text-2xl uppercase mb-10 hover:text-secondary transition">
+      <div className="flex-1 flex items-center justify-center p-4 sm:p-6">
+        <div className="w-full max-w-sm sm:max-w-md">
+          <Link href="/" className="block text-center text-white font-bold tracking-[0.24em] text-xl sm:text-2xl uppercase mb-8 sm:mb-10 hover:text-secondary transition">
             MateRooms
           </Link>
 
@@ -205,7 +205,7 @@ export default function RegisterPage() {
           )}
 
           {step === 'profile' && (
-            <form onSubmit={submitProfile} className="space-y-4 max-h-[65vh] overflow-y-auto pr-1">
+            <form onSubmit={submitProfile} className="space-y-4 max-h-[70dvh] overflow-y-auto pr-1">
               <div className="flex flex-col items-center mb-2">
                 <div
                   onClick={() => photoRef.current?.click()}
@@ -244,7 +244,7 @@ export default function RegisterPage() {
                 </div>
               ))}
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <div>
                   <label className="block text-xs font-semibold text-white/60 mb-1 uppercase tracking-wider">{t('auth.fields.age')}</label>
                   <input
@@ -267,7 +267,7 @@ export default function RegisterPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <div>
                   <label className="block text-xs font-semibold text-white/60 mb-1 uppercase tracking-wider">{t('auth.fields.city')}</label>
                   <select value={profile.city} onChange={(e) => setProfile({ ...profile, city: e.target.value })} className="input-field" required>
@@ -289,7 +289,7 @@ export default function RegisterPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <div>
                   <label className="block text-xs font-semibold text-white/60 mb-1 uppercase tracking-wider">{t('auth.fields.budgetMin')}</label>
                   <input
@@ -327,7 +327,7 @@ export default function RegisterPage() {
 
               <div className="border-t border-white/10 pt-4 space-y-3">
                 <p className="text-xs font-semibold text-white/60 uppercase tracking-wider">{t('auth.fields.lifestyle')}</p>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                   {[
                     { label: t('auth.profile.lifestyle.sleep'), key: 'sleepSchedule', opts: [['early', t('auth.profile.options.early')], ['normal', t('auth.profile.options.normal')], ['late', t('auth.profile.options.late')]] },
                     { label: t('auth.profile.lifestyle.cleanliness'), key: 'cleanlinessLevel', opts: [['very_clean', t('auth.profile.options.veryClean')], ['clean', t('auth.profile.options.clean')], ['relaxed', t('auth.profile.options.relaxed')]] },
@@ -347,7 +347,7 @@ export default function RegisterPage() {
                     </div>
                   ))}
                 </div>
-                <div className="flex gap-6">
+                <div className="flex flex-col gap-3 sm:flex-row sm:gap-6">
                   {[
                     ['smoking', t('auth.profile.lifestyle.smoking')],
                     ['pets', t('auth.profile.lifestyle.pets')],

@@ -31,17 +31,17 @@ export default function DashboardPage() {
   const daysLeft = (d: string) => Math.ceil((new Date(d).getTime() - Date.now()) / 86400000);
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-dvh bg-black">
       <DashboardHeader />
 
-      <main className="container-main py-10">
+      <main className="container-main py-6 sm:py-10">
         {/* Welcome */}
-        <div className="border border-white/10 rounded-2xl p-8 mb-10 bg-zinc-900/50 flex items-center justify-between">
+        <div className="border border-white/10 rounded-2xl p-5 sm:p-8 mb-8 sm:mb-10 bg-zinc-900/50 flex flex-col items-start gap-5 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-3xl font-serif font-light text-white mb-1">{t('dashboard.welcome', { name: user.name })}</h1>
+            <h1 className="text-2xl sm:text-3xl font-serif font-light text-white mb-1">{t('dashboard.welcome', { name: user.name })}</h1>
             <p className="text-white/40 text-sm">{t('dashboard.subtitle', { city: user.city })}</p>
           </div>
-          <Link href="/listings/create" className="btn-primary flex items-center gap-2">
+          <Link href="/listings/create" className="btn-primary flex w-full items-center justify-center gap-2 sm:w-auto">
             <Plus size={18} /> {t('dashboard.createListing')}
           </Link>
         </div>
@@ -67,39 +67,39 @@ export default function DashboardPage() {
           <div className="lg:col-span-2 space-y-6">
             {/* Profile card */}
             <div className="card">
-              <div className="flex justify-between items-start mb-5">
+              <div className="flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-start">
                 <div>
                   <h2 className="text-xl font-semibold text-white">{user.name}</h2>
                   <p className="text-white/40 text-sm">{user.phone}</p>
                 </div>
-                <Link href="/profile" className="btn-outline text-sm px-4 py-2">{t('dashboard.edit')}</Link>
+                <Link href="/profile" className="btn-outline text-center text-sm px-4 py-2 sm:text-left">{t('dashboard.edit')}</Link>
               </div>
             </div>
 
             {/* Active listings */}
             <div className="card">
-              <div className="flex justify-between items-center mb-5">
+              <div className="flex flex-col gap-3 mb-5 sm:flex-row sm:items-center sm:justify-between">
                 <h2 className="text-xl font-semibold text-white">{t('dashboard.stats.activeListings')}</h2>
-                <Link href="/listings/create" className="btn-primary text-sm px-4 py-2">{t('dashboard.newListing')}</Link>
+                <Link href="/listings/create" className="btn-primary text-center text-sm px-4 py-2">{t('dashboard.newListing')}</Link>
               </div>
               <div className="space-y-3">
                 {listings.map((l) => {
                   const days = daysLeft(l.expiresAt);
                   return (
                     <div key={l.id} className="border border-white/10 rounded-xl p-4 hover:border-secondary/30 transition">
-                      <div className="flex justify-between items-start mb-3">
-                        <div>
+                      <div className="flex flex-col gap-3 mb-3 sm:flex-row sm:items-start sm:justify-between">
+                        <div className="min-w-0">
                           <h3 className="font-medium text-white text-sm">{l.title}</h3>
                           <p className="text-white/40 text-xs mt-0.5">
                             {t('dashboard.listingMeta', { district: l.district, current: l.residents.current, total: l.residents.total })}
                           </p>
                         </div>
-                        <p className="text-secondary font-bold">₺{l.monthlyRent.perPerson?.toLocaleString('tr-TR')}</p>
+                        <p className="text-secondary font-bold sm:text-right">₺{l.monthlyRent.perPerson?.toLocaleString('tr-TR')}</p>
                       </div>
-                      <div className="flex justify-between items-center text-xs text-white/40 border-t border-white/5 pt-3">
+                      <div className="flex flex-col gap-2 text-xs text-white/40 border-t border-white/5 pt-3 sm:flex-row sm:items-center sm:justify-between">
                         <span>{t('dashboard.listingActivity', { messages: l.messages, views: l.views })}</span>
                         <button onClick={() => renewListing(l.id)}
-                          className={`flex items-center gap-1 transition ${days <= 7 ? 'text-amber-400 hover:text-amber-300' : 'text-white/30 hover:text-white/60'}`}>
+                          className={`flex items-center gap-1 transition sm:justify-end ${days <= 7 ? 'text-amber-400 hover:text-amber-300' : 'text-white/30 hover:text-white/60'}`}>
                           {days <= 7 ? <AlertTriangle size={11} /> : <RefreshCw size={11} />}
                           {t('dashboard.daysLeft', { days })}
                         </button>
@@ -114,7 +114,7 @@ export default function DashboardPage() {
           <div className="space-y-6">
             {/* Messages */}
             <div className="card">
-              <div className="flex justify-between items-center mb-4">
+              <div className="flex items-center justify-between gap-3 mb-4">
                 <h3 className="font-semibold text-white">{t('dashboard.lastMessages')}</h3>
                 <Link href="/messages" className="text-secondary text-xs hover:underline">{t('dashboard.all')}</Link>
               </div>

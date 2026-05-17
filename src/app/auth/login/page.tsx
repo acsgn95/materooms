@@ -80,12 +80,12 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-black flex flex-col">
+    <div className="min-h-dvh bg-black flex flex-col">
       <div className="h-0.5 bg-secondary" />
 
-      <div className="flex-1 flex items-center justify-center p-4">
+      <div className="flex-1 flex items-center justify-center p-4 sm:p-6">
         <div className="w-full max-w-sm">
-          <Link href="/" className="block text-center text-white font-bold tracking-[0.28em] text-2xl uppercase mb-12 hover:text-secondary transition">
+          <Link href="/" className="block text-center text-white font-bold tracking-[0.24em] text-xl sm:text-2xl uppercase mb-10 sm:mb-12 hover:text-secondary transition">
             MateRooms
           </Link>
 
