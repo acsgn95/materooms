@@ -129,22 +129,25 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="bg-black py-24 px-8 text-center border-t border-white/10">
-        <p className="text-white/30 text-xs tracking-widest uppercase mb-6">-</p>
-        <h2 className="text-4xl md:text-5xl text-white/80 font-serif font-light mb-8">
-          {home.contact.title}
-        </h2>
-        <p className="text-white/40 mb-10">{home.contact.description}</p>
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <a
-            href="mailto:hello@materooms.com"
-            className="border border-white/20 text-white/70 px-8 py-3 rounded-full hover:border-red-500/50 hover:text-white transition text-sm"
-          >
-            hello@materooms.com
-          </a>
-          <Link href="/auth/register" className="btn-primary text-sm flex items-center justify-center gap-2">
-            {home.contact.cta} <ArrowRight size={16} />
-          </Link>
+      <section className="bg-black py-10 px-8 border-t border-white/10">
+        <div className="max-w-5xl mx-auto flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
+          <div>
+            <p className="text-xs font-semibold tracking-widest uppercase mb-2" style={{ color: '#C8602A' }}>
+              {home.contact.title}
+            </p>
+            <p className="text-white/45 text-sm">{home.contact.description}</p>
+          </div>
+          <div className="flex flex-col sm:flex-row gap-3">
+            <a
+              href="mailto:hello@materooms.com"
+              className="border border-white/20 text-white/70 px-5 py-2.5 rounded-full hover:border-red-500/50 hover:text-white transition text-sm"
+            >
+              hello@materooms.com
+            </a>
+            <Link href="/auth/register" className="btn-primary !px-5 !py-2.5 !text-sm flex items-center justify-center gap-2">
+              {home.contact.cta} <ArrowRight size={15} />
+            </Link>
+          </div>
         </div>
       </section>
 

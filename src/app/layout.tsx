@@ -3,7 +3,7 @@ import { I18nProvider } from "@/i18n/I18nProvider";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "MateRooms - Turkey's Verified Flatmate Platform",
+  title: "MateRooms - Türkiye's Verified Flatmate Platform",
   description: "Find trusted flatmates with verified identity and secure payments",
 };
 

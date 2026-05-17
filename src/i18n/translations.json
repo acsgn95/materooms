@@ -104,7 +104,7 @@
           {
             "step": "02",
             "title": "İlan Oluştur veya Ara",
-            "description": "Üç ilan tipinden birini seç. Filtrelerle ideal eşleşmeyi bul."
+            "description": "Aradığın şehri seç. Filtrelerle ideal eşleşmeyi bul."
           },
           {
             "step": "03",
@@ -379,7 +379,7 @@
       "hero": {
         "eyebrow": "LIVE SHARED",
         "title": "A smarter rental experience",
-        "description": "Turkey's trusted flatmate platform with verified identity, secure payments, and objective scoring.",
+        "description": "Türkiye's trusted flatmate platform with verified identity, secure payments, and objective scoring.",
         "primaryCta": "Get Started",
         "secondaryCta": "Explore"
       },
@@ -413,7 +413,7 @@
           {
             "step": "02",
             "title": "Create or Search Listings",
-            "description": "Choose one of three listing types and use filters to find the right match."
+            "description": "Choose the city you are looking for and use filters to find the right match."
           },
           {
             "step": "03",
