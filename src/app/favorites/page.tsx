@@ -40,7 +40,7 @@ export default function FavoritesPage() {
         <div className="flex justify-between items-center mb-6">
           <div className="flex items-center gap-3">
             <h1 className="text-3xl font-serif font-light text-white">Favori İlanlar</h1>
-            <span className="text-white text-sm font-bold px-2.5 py-0.5 rounded-full" style={{ background: 'linear-gradient(135deg, #E8192C, #F7933A)' }}>{favorites.length}</span>
+            <span className="text-on-accent text-white text-sm font-bold px-2.5 py-0.5 rounded-full" style={{ background: 'linear-gradient(135deg, #E8192C, #F7933A)' }}>{favorites.length}</span>
           </div>
           <Link href="/listings" className="btn-outline">İlanlara Geri Dön</Link>
         </div>

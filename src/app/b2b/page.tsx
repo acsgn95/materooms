@@ -82,7 +82,7 @@ export default function B2BPage() {
               {PLANS.map((plan) => (
                 <div key={plan.name} className={`card flex flex-col relative ${plan.highlighted ? 'border-secondary shadow-[0_0_30px_rgba(232,25,44,0.15)]' : ''}`}>
                   {plan.highlighted && (
-                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 text-white text-xs font-bold px-4 py-1 rounded-full" style={{ background: '#B91C2E' }}>
+                    <div className="text-on-accent absolute -top-3 left-1/2 -translate-x-1/2 text-white text-xs font-bold px-4 py-1 rounded-full" style={{ background: '#B91C2E' }}>
                       En Popüler
                     </div>
                   )}

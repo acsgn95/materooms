@@ -17,7 +17,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-black font-sans">
-      <section className="relative min-h-screen flex flex-col">
+      <section className="preserve-hero-media relative min-h-screen flex flex-col">
         <div
           className="absolute top-0 left-0 right-0 h-1 z-20"
           style={{ background: 'linear-gradient(90deg, #B91C2E 0%, #C8602A 100%)' }}
