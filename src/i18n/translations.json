@@ -141,6 +141,110 @@
       },
       "logout": "Çıkış Yap"
     },
+    "auth": {
+      "welcome": "Hoş Geldin",
+      "loginSubtitle": "Hesabına giriş yap",
+      "registerSubtitle": "Güvenilir arkadaş bulmaya başla",
+      "methods": {
+        "phone": "Telefon",
+        "email": "E-posta"
+      },
+      "fields": {
+        "phone": "Telefon Numarası",
+        "email": "E-posta Adresi",
+        "otp": "Doğrulama Kodu",
+        "name": "Ad Soyad *",
+        "age": "Yaş",
+        "gender": "Cinsiyet",
+        "city": "Şehir *",
+        "occupation": "Meslek",
+        "budgetMin": "Min Bütçe ₺",
+        "budgetMax": "Max Bütçe ₺",
+        "bio": "Hakkımda",
+        "lifestyle": "Yaşam Tarzı"
+      },
+      "contactTarget": {
+        "phone": "{value} numarasına",
+        "email": "{value} adresine"
+      },
+      "otpSent": "{target} gönderildi",
+      "buttons": {
+        "sendOtp": "Doğrulama Kodu Gönder",
+        "sendCode": "Kod Gönder",
+        "sending": "Gönderiliyor...",
+        "login": "Giriş Yap",
+        "loggingIn": "Giriş Yapılıyor...",
+        "verifying": "Doğrulanıyor...",
+        "back": "← Geri",
+        "backLogin": "← Geri Dön",
+        "addPhoto": "Fotoğraf Ekle",
+        "saving": "Kaydediliyor...",
+        "start": "Başla"
+      },
+      "links": {
+        "noAccount": "Hesabın yok mu?",
+        "haveAccount": "Zaten hesabın var mı?",
+        "signup": "Kaydol",
+        "login": "Giriş Yap"
+      },
+      "placeholders": {
+        "email": "ornek@mail.com",
+        "name": "Ahmet Yılmaz",
+        "occupation": "Yazılım Mühendisi",
+        "bio": "Kendini kısaca tanıt..."
+      },
+      "profile": {
+        "select": "Seç",
+        "gender": {
+          "male": "Erkek",
+          "female": "Kadın",
+          "other": "Diğer"
+        },
+        "lifestyle": {
+          "sleep": "Uyku",
+          "cleanliness": "Temizlik",
+          "guests": "Misafir",
+          "noise": "Gürültü",
+          "smoking": "Sigara",
+          "pets": "Evcil Hayvan"
+        },
+        "options": {
+          "early": "Erken",
+          "normal": "Normal",
+          "late": "Geç",
+          "veryClean": "Çok Titiz",
+          "clean": "Temiz",
+          "relaxed": "Esnek",
+          "often": "Sık Sık",
+          "sometimes": "Ara Sıra",
+          "rarely": "Nadiren",
+          "never": "Hayır",
+          "quiet": "Sessiz",
+          "medium": "Orta",
+          "flexible": "Esnek"
+        }
+      }
+    },
+    "dashboard": {
+      "welcome": "Hoş Geldin, {name}",
+      "subtitle": "{city} · Güvenilir arkadaş bulmaya hazır mısın?",
+      "createListing": "İlan Oluştur",
+      "stats": {
+        "activeListings": "Aktif İlanlar",
+        "newMessages": "Yeni Mesajlar",
+        "favorites": "Favoriler"
+      },
+      "edit": "Düzenle",
+      "newListing": "Yeni İlan",
+      "listingMeta": "{district} · {current}/{total} kişi",
+      "listingActivity": "{messages} mesaj · {views} görüntülenme",
+      "daysLeft": "{days}g kaldı",
+      "lastMessages": "Son Mesajlar",
+      "all": "Tümü",
+      "quickActions": "Hızlı İşlemler",
+      "searchListings": "İlanları Ara",
+      "completeVerification": "Doğrulamayı Tamamla"
+    },
     "listings": {
       "title": "İlanları Keşfet",
       "found": "{count} ilan bulundu",
@@ -449,6 +553,110 @@
         "profile": "Profile"
       },
       "logout": "Log Out"
+    },
+    "auth": {
+      "welcome": "Welcome",
+      "loginSubtitle": "Log in to your account",
+      "registerSubtitle": "Start finding trusted flatmates",
+      "methods": {
+        "phone": "Phone",
+        "email": "Email"
+      },
+      "fields": {
+        "phone": "Phone Number",
+        "email": "Email Address",
+        "otp": "Verification Code",
+        "name": "Full Name *",
+        "age": "Age",
+        "gender": "Gender",
+        "city": "City *",
+        "occupation": "Occupation",
+        "budgetMin": "Min Budget ₺",
+        "budgetMax": "Max Budget ₺",
+        "bio": "About Me",
+        "lifestyle": "Lifestyle"
+      },
+      "contactTarget": {
+        "phone": "{value}",
+        "email": "{value}"
+      },
+      "otpSent": "Sent to {target}",
+      "buttons": {
+        "sendOtp": "Send Verification Code",
+        "sendCode": "Send Code",
+        "sending": "Sending...",
+        "login": "Log In",
+        "loggingIn": "Logging in...",
+        "verifying": "Verifying...",
+        "back": "← Back",
+        "backLogin": "← Go Back",
+        "addPhoto": "Add Photo",
+        "saving": "Saving...",
+        "start": "Start"
+      },
+      "links": {
+        "noAccount": "Don't have an account?",
+        "haveAccount": "Already have an account?",
+        "signup": "Sign Up",
+        "login": "Log In"
+      },
+      "placeholders": {
+        "email": "example@mail.com",
+        "name": "Ahmet Yilmaz",
+        "occupation": "Software Engineer",
+        "bio": "Briefly introduce yourself..."
+      },
+      "profile": {
+        "select": "Select",
+        "gender": {
+          "male": "Male",
+          "female": "Female",
+          "other": "Other"
+        },
+        "lifestyle": {
+          "sleep": "Sleep",
+          "cleanliness": "Cleanliness",
+          "guests": "Guests",
+          "noise": "Noise",
+          "smoking": "Smoking",
+          "pets": "Pets"
+        },
+        "options": {
+          "early": "Early",
+          "normal": "Normal",
+          "late": "Late",
+          "veryClean": "Very Clean",
+          "clean": "Clean",
+          "relaxed": "Relaxed",
+          "often": "Often",
+          "sometimes": "Sometimes",
+          "rarely": "Rarely",
+          "never": "No",
+          "quiet": "Quiet",
+          "medium": "Medium",
+          "flexible": "Flexible"
+        }
+      }
+    },
+    "dashboard": {
+      "welcome": "Welcome, {name}",
+      "subtitle": "{city} · Ready to find a trusted flatmate?",
+      "createListing": "Create Listing",
+      "stats": {
+        "activeListings": "Active Listings",
+        "newMessages": "New Messages",
+        "favorites": "Favorites"
+      },
+      "edit": "Edit",
+      "newListing": "New Listing",
+      "listingMeta": "{district} · {current}/{total} people",
+      "listingActivity": "{messages} messages · {views} views",
+      "daysLeft": "{days}d left",
+      "lastMessages": "Recent Messages",
+      "all": "All",
+      "quickActions": "Quick Actions",
+      "searchListings": "Search Listings",
+      "completeVerification": "Complete Verification"
     },
     "listings": {
       "title": "Explore Listings",

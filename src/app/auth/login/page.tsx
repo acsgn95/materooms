@@ -5,12 +5,14 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Mail, Phone } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
+import { useI18n } from '@/i18n/I18nProvider';
 
 type AuthMethod = 'phone' | 'email';
 
 export default function LoginPage() {
   const router = useRouter();
   const login = useAuthStore((s) => s.login);
+  const { t } = useI18n();
 
   const [step, setStep] = useState<'contact' | 'otp'>('contact');
   const [authMethod, setAuthMethod] = useState<AuthMethod>('phone');
@@ -21,7 +23,7 @@ export default function LoginPage() {
   const otpRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   const contactValue = authMethod === 'phone' ? phone : email;
-  const contactTarget = authMethod === 'phone' ? `${phone} numarasına` : `${email} adresine`;
+  const contactTarget = t(`auth.contactTarget.${authMethod}`, { value: contactValue });
 
   const handleContactSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -87,8 +89,8 @@ export default function LoginPage() {
             MateRooms
           </Link>
 
-          <h1 className="text-3xl font-serif font-light text-white mb-2">Hoş Geldin</h1>
-          <p className="text-white/40 mb-8 text-sm">Hesabına giriş yap</p>
+          <h1 className="text-3xl font-serif font-light text-white mb-2">{t('auth.welcome')}</h1>
+          <p className="text-white/40 mb-8 text-sm">{t('auth.loginSubtitle')}</p>
 
           {step === 'contact' && (
             <form onSubmit={handleContactSubmit} className="space-y-5">
@@ -102,14 +104,14 @@ export default function LoginPage() {
                       authMethod === method ? 'bg-white text-black' : 'text-white/50 hover:text-white'
                     }`}
                   >
-                    {method === 'phone' ? 'Telefon' : 'E-posta'}
+                    {t(`auth.methods.${method}`)}
                   </button>
                 ))}
               </div>
 
               <div>
                 <label className="block text-xs font-semibold text-white/60 mb-2 uppercase tracking-wider">
-                  {authMethod === 'phone' ? 'Telefon Numarası' : 'E-posta Adresi'}
+                  {t(`auth.fields.${authMethod}`)}
                 </label>
                 <div className="flex items-center gap-3 rounded-lg border border-white/10 bg-zinc-800 px-4 transition-all focus-within:border-transparent focus-within:ring-2 focus-within:ring-[#E8192C]">
                   {authMethod === 'phone'
@@ -117,7 +119,7 @@ export default function LoginPage() {
                     : <Mail className="flex-shrink-0 text-white/30" size={18} />}
                   <input
                     type={authMethod === 'phone' ? 'tel' : 'email'}
-                    placeholder={authMethod === 'phone' ? '+90 5XX XXX XXXX' : 'ornek@mail.com'}
+                    placeholder={authMethod === 'phone' ? '+90 5XX XXX XXXX' : t('auth.placeholders.email')}
                     value={contactValue}
                     onChange={(e) => authMethod === 'phone' ? setPhone(e.target.value) : setEmail(e.target.value)}
                     className="min-w-0 flex-1 bg-transparent py-3 text-white placeholder:text-white/30 focus:outline-none"
@@ -127,11 +129,11 @@ export default function LoginPage() {
               </div>
 
               <button type="submit" disabled={loading} className="btn-primary w-full disabled:opacity-40">
-                {loading ? 'Gönderiliyor...' : 'Doğrulama Kodu Gönder'}
+                {loading ? t('auth.buttons.sending') : t('auth.buttons.sendOtp')}
               </button>
               <p className="text-center text-sm text-white/40">
-                Hesabın yok mu?{' '}
-                <Link href="/auth/register" className="text-secondary hover:underline">Kaydol</Link>
+                {t('auth.links.noAccount')}{' '}
+                <Link href="/auth/register" className="text-secondary hover:underline">{t('auth.links.signup')}</Link>
               </p>
             </form>
           )}
@@ -139,8 +141,8 @@ export default function LoginPage() {
           {step === 'otp' && (
             <form onSubmit={handleOtpSubmit} className="space-y-5">
               <div>
-                <label className="block text-xs font-semibold text-white/60 mb-2 uppercase tracking-wider">Doğrulama Kodu</label>
-                <p className="text-white/40 text-sm mb-4">{contactTarget} gönderildi</p>
+                <label className="block text-xs font-semibold text-white/60 mb-2 uppercase tracking-wider">{t('auth.fields.otp')}</label>
+                <p className="text-white/40 text-sm mb-4">{t('auth.otpSent', { target: contactTarget })}</p>
                 <div className="grid grid-cols-6 gap-2" onPaste={handleOtpPaste}>
                   {otp.map((d, i) => (
                     <input
@@ -162,10 +164,10 @@ export default function LoginPage() {
                 disabled={loading || otp.join('').length !== 6}
                 className="btn-primary w-full disabled:opacity-40"
               >
-                {loading ? 'Giriş Yapılıyor...' : 'Giriş Yap'}
+                {loading ? t('auth.buttons.loggingIn') : t('auth.buttons.login')}
               </button>
               <button type="button" onClick={resetToContactStep} className="w-full text-secondary text-sm hover:underline">
-                ← Geri Dön
+                {t('auth.buttons.backLogin')}
               </button>
             </form>
           )}

@@ -4,8 +4,10 @@ import { useState } from 'react';
 import { DashboardHeader } from '@/components/common/DashboardHeader';
 import { Plus, MessageSquare, Heart, RefreshCw, AlertTriangle } from 'lucide-react';
 import Link from 'next/link';
+import { useI18n } from '@/i18n/I18nProvider';
 
 export default function DashboardPage() {
+  const { t } = useI18n();
   const user = { name: 'Ahmet Yılmaz', phone: '+90 555 123 45 67', city: 'İstanbul' };
 
   const [listings, setListings] = useState([
@@ -36,20 +38,20 @@ export default function DashboardPage() {
         {/* Welcome */}
         <div className="border border-white/10 rounded-2xl p-8 mb-10 bg-zinc-900/50 flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-serif font-light text-white mb-1">Hoş Geldin, {user.name}</h1>
-            <p className="text-white/40 text-sm">{user.city} · Güvenilir arkadaş bulmaya hazır mısın?</p>
+            <h1 className="text-3xl font-serif font-light text-white mb-1">{t('dashboard.welcome', { name: user.name })}</h1>
+            <p className="text-white/40 text-sm">{t('dashboard.subtitle', { city: user.city })}</p>
           </div>
           <Link href="/listings/create" className="btn-primary flex items-center gap-2">
-            <Plus size={18} /> İlan Oluştur
+            <Plus size={18} /> {t('dashboard.createListing')}
           </Link>
         </div>
 
         {/* Stats */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
           {[
-            { label: 'Aktif İlanlar', value: listings.length, icon: <Plus size={20} />, color: 'text-secondary' },
-            { label: 'Yeni Mesajlar', value: recentMessages.filter(m => m.unread).length, icon: <MessageSquare size={20} />, color: 'text-secondary' },
-            { label: 'Favoriler', value: 5, icon: <Heart size={20} />, color: 'text-secondary' },
+            { label: t('dashboard.stats.activeListings'), value: listings.length, icon: <Plus size={20} />, color: 'text-secondary' },
+            { label: t('dashboard.stats.newMessages'), value: recentMessages.filter(m => m.unread).length, icon: <MessageSquare size={20} />, color: 'text-secondary' },
+            { label: t('dashboard.stats.favorites'), value: 5, icon: <Heart size={20} />, color: 'text-secondary' },
           ].map((s) => (
             <div key={s.label} className="card">
               <div className="flex items-center justify-between mb-3">
@@ -70,15 +72,15 @@ export default function DashboardPage() {
                   <h2 className="text-xl font-semibold text-white">{user.name}</h2>
                   <p className="text-white/40 text-sm">{user.phone}</p>
                 </div>
-                <Link href="/profile" className="btn-outline text-sm px-4 py-2">Düzenle</Link>
+                <Link href="/profile" className="btn-outline text-sm px-4 py-2">{t('dashboard.edit')}</Link>
               </div>
             </div>
 
             {/* Active listings */}
             <div className="card">
               <div className="flex justify-between items-center mb-5">
-                <h2 className="text-xl font-semibold text-white">Aktif İlanlar</h2>
-                <Link href="/listings/create" className="btn-primary text-sm px-4 py-2">Yeni İlan</Link>
+                <h2 className="text-xl font-semibold text-white">{t('dashboard.stats.activeListings')}</h2>
+                <Link href="/listings/create" className="btn-primary text-sm px-4 py-2">{t('dashboard.newListing')}</Link>
               </div>
               <div className="space-y-3">
                 {listings.map((l) => {
@@ -88,16 +90,18 @@ export default function DashboardPage() {
                       <div className="flex justify-between items-start mb-3">
                         <div>
                           <h3 className="font-medium text-white text-sm">{l.title}</h3>
-                          <p className="text-white/40 text-xs mt-0.5">{l.district} · {l.residents.current}/{l.residents.total} kişi</p>
+                          <p className="text-white/40 text-xs mt-0.5">
+                            {t('dashboard.listingMeta', { district: l.district, current: l.residents.current, total: l.residents.total })}
+                          </p>
                         </div>
                         <p className="text-secondary font-bold">₺{l.monthlyRent.perPerson?.toLocaleString('tr-TR')}</p>
                       </div>
                       <div className="flex justify-between items-center text-xs text-white/40 border-t border-white/5 pt-3">
-                        <span>{l.messages} mesaj · {l.views} görüntülenme</span>
+                        <span>{t('dashboard.listingActivity', { messages: l.messages, views: l.views })}</span>
                         <button onClick={() => renewListing(l.id)}
                           className={`flex items-center gap-1 transition ${days <= 7 ? 'text-amber-400 hover:text-amber-300' : 'text-white/30 hover:text-white/60'}`}>
                           {days <= 7 ? <AlertTriangle size={11} /> : <RefreshCw size={11} />}
-                          {days}g kaldı
+                          {t('dashboard.daysLeft', { days })}
                         </button>
                       </div>
                     </div>
@@ -111,8 +115,8 @@ export default function DashboardPage() {
             {/* Messages */}
             <div className="card">
               <div className="flex justify-between items-center mb-4">
-                <h3 className="font-semibold text-white">Son Mesajlar</h3>
-                <Link href="/messages" className="text-secondary text-xs hover:underline">Tümü</Link>
+                <h3 className="font-semibold text-white">{t('dashboard.lastMessages')}</h3>
+                <Link href="/messages" className="text-secondary text-xs hover:underline">{t('dashboard.all')}</Link>
               </div>
               <div className="space-y-2">
                 {recentMessages.map((m) => (
@@ -128,10 +132,10 @@ export default function DashboardPage() {
 
             {/* Quick actions */}
             <div className="card">
-              <p className="text-white/40 text-xs uppercase tracking-wider mb-5">Hızlı İşlemler</p>
+              <p className="text-white/40 text-xs uppercase tracking-wider mb-5">{t('dashboard.quickActions')}</p>
               <div className="space-y-3">
-                <Link href="/listings" className="btn-secondary flex w-full justify-center text-center text-sm py-2.5">İlanları Ara</Link>
-                <Link href="/verify" className="btn-secondary flex w-full justify-center text-center text-sm py-2.5">Doğrulamayı Tamamla</Link>
+                <Link href="/listings" className="btn-secondary flex w-full justify-center text-center text-sm py-2.5">{t('dashboard.searchListings')}</Link>
+                <Link href="/verify" className="btn-secondary flex w-full justify-center text-center text-sm py-2.5">{t('dashboard.completeVerification')}</Link>
               </div>
             </div>
           </div>

@@ -5,12 +5,14 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Camera, Mail, Phone } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
+import { useI18n } from '@/i18n/I18nProvider';
 
 type AuthMethod = 'phone' | 'email';
 
 export default function RegisterPage() {
   const router = useRouter();
   const login = useAuthStore((s) => s.login);
+  const { t } = useI18n();
 
   const [step, setStep] = useState<'contact' | 'otp' | 'profile'>('contact');
   const [authMethod, setAuthMethod] = useState<AuthMethod>('phone');
@@ -43,7 +45,7 @@ export default function RegisterPage() {
   const steps = ['contact', 'otp', 'profile'];
   const stepIdx = steps.indexOf(step);
   const contactValue = authMethod === 'phone' ? phone : email;
-  const contactTarget = authMethod === 'phone' ? `${phone} numarasına` : `${email} adresine`;
+  const contactTarget = t(`auth.contactTarget.${authMethod}`, { value: contactValue });
 
   const handleOtpChange = (i: number, v: string) => {
     if (!/^\d?$/.test(v)) return;
@@ -118,8 +120,8 @@ export default function RegisterPage() {
             MateRooms
           </Link>
 
-          <h1 className="text-3xl font-serif font-light text-white mb-2">Hoş Geldin</h1>
-          <p className="text-white/40 text-sm mb-6">Güvenilir arkadaş bulmaya başla</p>
+          <h1 className="text-3xl font-serif font-light text-white mb-2">{t('auth.welcome')}</h1>
+          <p className="text-white/40 text-sm mb-6">{t('auth.registerSubtitle')}</p>
 
           <div className="flex gap-1.5 mb-8">
             {steps.map((_, i) => (
@@ -139,14 +141,14 @@ export default function RegisterPage() {
                       authMethod === method ? 'bg-white text-black' : 'text-white/50 hover:text-white'
                     }`}
                   >
-                    {method === 'phone' ? 'Telefon' : 'E-posta'}
+                    {t(`auth.methods.${method}`)}
                   </button>
                 ))}
               </div>
 
               <div>
                 <label className="block text-xs font-semibold text-white/60 mb-2 uppercase tracking-wider">
-                  {authMethod === 'phone' ? 'Telefon Numarası' : 'E-posta Adresi'}
+                  {t(`auth.fields.${authMethod}`)}
                 </label>
                 <div className="flex items-center gap-3 rounded-lg border border-white/10 bg-zinc-800 px-4 transition-all focus-within:border-transparent focus-within:ring-2 focus-within:ring-[#E8192C]">
                   {authMethod === 'phone'
@@ -154,7 +156,7 @@ export default function RegisterPage() {
                     : <Mail className="flex-shrink-0 text-white/30" size={18} />}
                   <input
                     type={authMethod === 'phone' ? 'tel' : 'email'}
-                    placeholder={authMethod === 'phone' ? '+90 5XX XXX XXXX' : 'ornek@mail.com'}
+                    placeholder={authMethod === 'phone' ? '+90 5XX XXX XXXX' : t('auth.placeholders.email')}
                     value={contactValue}
                     onChange={(e) => authMethod === 'phone' ? setPhone(e.target.value) : setEmail(e.target.value)}
                     className="min-w-0 flex-1 bg-transparent py-3 text-white placeholder:text-white/30 focus:outline-none"
@@ -164,10 +166,10 @@ export default function RegisterPage() {
               </div>
 
               <button type="submit" disabled={loading} className="btn-primary w-full disabled:opacity-40">
-                {loading ? 'Gönderiliyor...' : 'Kod Gönder'}
+                {loading ? t('auth.buttons.sending') : t('auth.buttons.sendCode')}
               </button>
               <p className="text-center text-sm text-white/40">
-                Zaten hesabın var mı? <Link href="/auth/login" className="text-secondary hover:underline">Giriş Yap</Link>
+                {t('auth.links.haveAccount')} <Link href="/auth/login" className="text-secondary hover:underline">{t('auth.links.login')}</Link>
               </p>
             </form>
           )}
@@ -175,8 +177,8 @@ export default function RegisterPage() {
           {step === 'otp' && (
             <form onSubmit={submitOtp} className="space-y-5">
               <div>
-                <label className="block text-xs font-semibold text-white/60 mb-2 uppercase tracking-wider">Doğrulama Kodu</label>
-                <p className="text-white/40 text-sm mb-4">{contactTarget} gönderildi</p>
+                <label className="block text-xs font-semibold text-white/60 mb-2 uppercase tracking-wider">{t('auth.fields.otp')}</label>
+                <p className="text-white/40 text-sm mb-4">{t('auth.otpSent', { target: contactTarget })}</p>
                 <div className="grid grid-cols-6 gap-2" onPaste={handleOtpPaste}>
                   {otp.map((d, i) => (
                     <input
@@ -194,10 +196,10 @@ export default function RegisterPage() {
                 </div>
               </div>
               <button type="submit" disabled={loading || otp.join('').length !== 6} className="btn-primary w-full disabled:opacity-40">
-                {loading ? 'Doğrulanıyor...' : 'Devam Et'}
+                {loading ? t('auth.buttons.verifying') : t('common.actions.continue')}
               </button>
               <button type="button" onClick={resetToContactStep} className="w-full text-secondary text-sm hover:underline">
-                ← Geri
+                {t('auth.buttons.back')}
               </button>
             </form>
           )}
@@ -213,7 +215,7 @@ export default function RegisterPage() {
                     ? <img src={photoPreview} alt="" className="w-full h-full object-cover" />
                     : <Camera size={24} className="text-white/30" />}
                 </div>
-                <button type="button" onClick={() => photoRef.current?.click()} className="text-secondary text-xs hover:underline">Fotoğraf Ekle</button>
+                <button type="button" onClick={() => photoRef.current?.click()} className="text-secondary text-xs hover:underline">{t('auth.buttons.addPhoto')}</button>
                 <input
                   ref={photoRef}
                   type="file"
@@ -227,7 +229,7 @@ export default function RegisterPage() {
               </div>
 
               {[
-                { label: 'Ad Soyad *', key: 'name', type: 'text', placeholder: 'Ahmet Yılmaz', required: true },
+                { label: t('auth.fields.name'), key: 'name', type: 'text', placeholder: t('auth.placeholders.name'), required: true },
               ].map((f) => (
                 <div key={f.key}>
                   <label className="block text-xs font-semibold text-white/60 mb-1 uppercase tracking-wider">{f.label}</label>
@@ -244,7 +246,7 @@ export default function RegisterPage() {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-white/60 mb-1 uppercase tracking-wider">Yaş</label>
+                  <label className="block text-xs font-semibold text-white/60 mb-1 uppercase tracking-wider">{t('auth.fields.age')}</label>
                   <input
                     type="number"
                     placeholder="25"
@@ -255,31 +257,31 @@ export default function RegisterPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-white/60 mb-1 uppercase tracking-wider">Cinsiyet</label>
+                  <label className="block text-xs font-semibold text-white/60 mb-1 uppercase tracking-wider">{t('auth.fields.gender')}</label>
                   <select value={profile.gender} onChange={(e) => setProfile({ ...profile, gender: e.target.value })} className="input-field">
-                    <option value="">Seç</option>
-                    <option value="male">Erkek</option>
-                    <option value="female">Kadın</option>
-                    <option value="other">Diğer</option>
+                    <option value="">{t('auth.profile.select')}</option>
+                    <option value="male">{t('auth.profile.gender.male')}</option>
+                    <option value="female">{t('auth.profile.gender.female')}</option>
+                    <option value="other">{t('auth.profile.gender.other')}</option>
                   </select>
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-white/60 mb-1 uppercase tracking-wider">Şehir *</label>
+                  <label className="block text-xs font-semibold text-white/60 mb-1 uppercase tracking-wider">{t('auth.fields.city')}</label>
                   <select value={profile.city} onChange={(e) => setProfile({ ...profile, city: e.target.value })} className="input-field" required>
-                    <option value="">Seç</option>
-                    <option value="istanbul">İstanbul</option>
-                    <option value="ankara">Ankara</option>
-                    <option value="izmir">İzmir</option>
+                    <option value="">{t('auth.profile.select')}</option>
+                    <option value="istanbul">{t('common.cities.istanbul')}</option>
+                    <option value="ankara">{t('common.cities.ankara')}</option>
+                    <option value="izmir">{t('common.cities.izmir')}</option>
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-white/60 mb-1 uppercase tracking-wider">Meslek</label>
+                  <label className="block text-xs font-semibold text-white/60 mb-1 uppercase tracking-wider">{t('auth.fields.occupation')}</label>
                   <input
                     type="text"
-                    placeholder="Yazılım Mühendisi"
+                    placeholder={t('auth.placeholders.occupation')}
                     value={profile.occupation}
                     onChange={(e) => setProfile({ ...profile, occupation: e.target.value })}
                     className="input-field"
@@ -289,7 +291,7 @@ export default function RegisterPage() {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-white/60 mb-1 uppercase tracking-wider">Min Bütçe ₺</label>
+                  <label className="block text-xs font-semibold text-white/60 mb-1 uppercase tracking-wider">{t('auth.fields.budgetMin')}</label>
                   <input
                     type="number"
                     placeholder="5000"
@@ -299,7 +301,7 @@ export default function RegisterPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-white/60 mb-1 uppercase tracking-wider">Max Bütçe ₺</label>
+                  <label className="block text-xs font-semibold text-white/60 mb-1 uppercase tracking-wider">{t('auth.fields.budgetMax')}</label>
                   <input
                     type="number"
                     placeholder="10000"
@@ -311,9 +313,9 @@ export default function RegisterPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-white/60 mb-1 uppercase tracking-wider">Hakkımda</label>
+                <label className="block text-xs font-semibold text-white/60 mb-1 uppercase tracking-wider">{t('auth.fields.bio')}</label>
                 <textarea
-                  placeholder="Kendini kısaca tanıt..."
+                  placeholder={t('auth.placeholders.bio')}
                   value={profile.bio}
                   maxLength={300}
                   rows={2}
@@ -324,13 +326,13 @@ export default function RegisterPage() {
               </div>
 
               <div className="border-t border-white/10 pt-4 space-y-3">
-                <p className="text-xs font-semibold text-white/60 uppercase tracking-wider">Yaşam Tarzı</p>
+                <p className="text-xs font-semibold text-white/60 uppercase tracking-wider">{t('auth.fields.lifestyle')}</p>
                 <div className="grid grid-cols-2 gap-3">
                   {[
-                    { label: 'Uyku', key: 'sleepSchedule', opts: [['early', 'Erken'], ['normal', 'Normal'], ['late', 'Geç']] },
-                    { label: 'Temizlik', key: 'cleanlinessLevel', opts: [['very_clean', 'Çok Titiz'], ['clean', 'Temiz'], ['relaxed', 'Esnek']] },
-                    { label: 'Misafir', key: 'guests', opts: [['often', 'Sık Sık'], ['sometimes', 'Ara Sıra'], ['rarely', 'Nadiren'], ['never', 'Hayır']] },
-                    { label: 'Gürültü', key: 'noiseTolerance', opts: [['low', 'Sessiz'], ['medium', 'Orta'], ['high', 'Esnek']] },
+                    { label: t('auth.profile.lifestyle.sleep'), key: 'sleepSchedule', opts: [['early', t('auth.profile.options.early')], ['normal', t('auth.profile.options.normal')], ['late', t('auth.profile.options.late')]] },
+                    { label: t('auth.profile.lifestyle.cleanliness'), key: 'cleanlinessLevel', opts: [['very_clean', t('auth.profile.options.veryClean')], ['clean', t('auth.profile.options.clean')], ['relaxed', t('auth.profile.options.relaxed')]] },
+                    { label: t('auth.profile.lifestyle.guests'), key: 'guests', opts: [['often', t('auth.profile.options.often')], ['sometimes', t('auth.profile.options.sometimes')], ['rarely', t('auth.profile.options.rarely')], ['never', t('auth.profile.options.never')]] },
+                    { label: t('auth.profile.lifestyle.noise'), key: 'noiseTolerance', opts: [['low', t('auth.profile.options.quiet')], ['medium', t('auth.profile.options.medium')], ['high', t('auth.profile.options.flexible')]] },
                   ].map((f) => (
                     <div key={f.key}>
                       <label className="block text-xs text-white/40 mb-1">{f.label}</label>
@@ -339,7 +341,7 @@ export default function RegisterPage() {
                         onChange={(e) => setProfile({ ...profile, [f.key]: e.target.value })}
                         className="input-field text-sm py-2"
                       >
-                        <option value="">Seç</option>
+                        <option value="">{t('auth.profile.select')}</option>
                         {f.opts.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
                       </select>
                     </div>
@@ -347,8 +349,8 @@ export default function RegisterPage() {
                 </div>
                 <div className="flex gap-6">
                   {[
-                    ['smoking', 'Sigara'],
-                    ['pets', 'Evcil Hayvan'],
+                    ['smoking', t('auth.profile.lifestyle.smoking')],
+                    ['pets', t('auth.profile.lifestyle.pets')],
                   ].map(([key, label]) => (
                     <label key={key} className="flex items-center gap-2 cursor-pointer text-sm text-white/60">
                       <input
@@ -364,7 +366,7 @@ export default function RegisterPage() {
               </div>
 
               <button type="submit" disabled={loading || !profile.name || !profile.city} className="btn-primary w-full disabled:opacity-40 mt-2">
-                {loading ? 'Kaydediliyor...' : 'Başla'}
+                {loading ? t('auth.buttons.saving') : t('auth.buttons.start')}
               </button>
             </form>
           )}
