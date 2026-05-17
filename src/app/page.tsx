@@ -25,7 +25,7 @@ export default function Home() {
 
         <HeroSlideshow />
 
-        <nav className="relative z-10 flex flex-col gap-4 px-4 py-5 sm:px-8 md:flex-row md:items-center md:justify-between">
+        <nav className="relative z-10 flex flex-col gap-1 px-4 pb-2 pt-3 sm:gap-3 sm:px-8 sm:py-5 md:flex-row md:items-center md:justify-between">
           <div className="hidden gap-6 text-sm text-white/70 md:flex">
             <Link href="#features" className="hover:text-white transition">
               {home.nav.features}
@@ -39,10 +39,10 @@ export default function Home() {
           </div>
 
           <div className="order-first self-center md:absolute md:left-1/2 md:order-none md:-translate-x-1/2">
-            <img src="/logo.png" alt="MateRooms" className="h-24 object-contain sm:h-32 md:h-72" />
+            <img src="/logo.png" alt="MateRooms" className="h-32 object-contain sm:h-40 md:h-72" />
           </div>
 
-          <div className="flex flex-wrap items-center justify-center gap-3 text-sm sm:gap-4 md:justify-end">
+          <div className="-mt-3 flex flex-wrap items-center justify-center gap-3 text-sm sm:mt-0 sm:gap-4 md:justify-end">
             <LanguageSwitcher />
             <Link href="/auth/login" className="text-white/80 hover:text-white transition font-medium">
               {home.nav.login}
