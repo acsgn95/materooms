@@ -142,10 +142,10 @@ export default function DashboardPage() {
 
             {/* Quick actions */}
             <div className="card">
-              <p className="text-white/40 text-xs uppercase tracking-wider mb-3">Hızlı İşlemler</p>
-              <div className="space-y-2">
-                <Link href="/listings" className="btn-outline w-full text-center text-sm py-2">İlanları Ara</Link>
-                <Link href="/verify" className="btn-secondary w-full text-center text-sm py-2">Doğrulamayı Tamamla</Link>
+              <p className="text-white/40 text-xs uppercase tracking-wider mb-5">Hızlı İşlemler</p>
+              <div className="space-y-3">
+                <Link href="/listings" className="btn-secondary flex w-full justify-center text-center text-sm py-2.5">İlanları Ara</Link>
+                <Link href="/verify" className="btn-secondary flex w-full justify-center text-center text-sm py-2.5">Doğrulamayı Tamamla</Link>
               </div>
             </div>
           </div>
