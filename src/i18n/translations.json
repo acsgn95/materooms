@@ -37,8 +37,8 @@
         "izmir": "İzmir"
       },
       "listingTypes": {
-        "room_available": "Oda Var",
-        "looking_for_room": "Oda Arıyorum",
+        "room_available": "Oda Kirala",
+        "looking_for_room": "Oda Ara",
         "looking_together": "Birlikte Ara"
       },
       "gender": {
@@ -220,10 +220,10 @@
       },
       "types": {
         "room_available": {
-          "description": "Mevcut ev/dairede arkadaş arıyorum"
+          "description": "Evime oda arkadaşı arıyorum"
         },
         "looking_for_room": {
-          "description": "Var olan bir eve katılmak istiyorum"
+          "description": "Kiralık odası olan bir eve katılmak istiyorum"
         },
         "looking_together": {
           "description": "Yeni ev için arkadaş bulup beraber kirala"
@@ -346,7 +346,7 @@
         "izmir": "Izmir"
       },
       "listingTypes": {
-        "room_available": "Room Available",
+        "room_available": "Rent Your Room",
         "looking_for_room": "Looking for Room",
         "looking_together": "Search Together"
       },
@@ -529,7 +529,7 @@
       },
       "types": {
         "room_available": {
-          "description": "I am looking for a flatmate for my current home"
+          "description": "I am looking for a flatmate for my home"
         },
         "looking_for_room": {
           "description": "I want to join an existing home"
