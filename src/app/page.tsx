@@ -39,7 +39,7 @@ export default function Home() {
           </div>
 
           <div className="order-first self-center md:absolute md:left-1/2 md:order-none md:-translate-x-1/2">
-            <img src="/logo.png" alt="MateRooms" className="h-72 object-contain sm:h-80 md:h-72" />
+            <img src="/logo.png" alt="MateRooms" className="h-96 max-w-[96vw] object-contain sm:h-[28rem] md:h-72" />
           </div>
 
           <div className="-mt-3 flex flex-wrap items-center justify-center gap-3 text-sm sm:mt-0 sm:gap-4 md:justify-end">
