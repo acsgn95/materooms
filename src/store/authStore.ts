@@ -11,6 +11,7 @@ type VerificationBadge =
 type User = {
   id: string;
   phone: string;
+  email?: string;
   name: string;
   city: string;
   verificationBadges: VerificationBadge[];

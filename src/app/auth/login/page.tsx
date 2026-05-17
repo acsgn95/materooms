@@ -1,29 +1,42 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useRef, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Phone } from 'lucide-react';
+import { Mail, Phone } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
+
+type AuthMethod = 'phone' | 'email';
 
 export default function LoginPage() {
   const router = useRouter();
-  const login  = useAuthStore((s) => s.login);
+  const login = useAuthStore((s) => s.login);
 
-  const [step, setStep]       = useState<'phone' | 'otp'>('phone');
-  const [phone, setPhone]     = useState('');
-  const [otp, setOtp]         = useState(['', '', '', '', '', '']);
+  const [step, setStep] = useState<'contact' | 'otp'>('contact');
+  const [authMethod, setAuthMethod] = useState<AuthMethod>('phone');
+  const [phone, setPhone] = useState('');
+  const [email, setEmail] = useState('');
+  const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [loading, setLoading] = useState(false);
   const otpRefs = useRef<(HTMLInputElement | null)[]>([]);
 
-  const handlePhoneSubmit = (e: React.FormEvent) => {
-    e.preventDefault(); setLoading(true);
-    setTimeout(() => { setStep('otp'); setLoading(false); }, 500);
+  const contactValue = authMethod === 'phone' ? phone : email;
+  const contactTarget = authMethod === 'phone' ? `${phone} numarasına` : `${email} adresine`;
+
+  const handleContactSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setTimeout(() => {
+      setStep('otp');
+      setLoading(false);
+    }, 500);
   };
 
   const handleOtpChange = (i: number, v: string) => {
     if (!/^\d?$/.test(v)) return;
-    const next = [...otp]; next[i] = v; setOtp(next);
+    const next = [...otp];
+    next[i] = v;
+    setOtp(next);
     if (v && i < 5) otpRefs.current[i + 1]?.focus();
   };
 
@@ -34,16 +47,34 @@ export default function LoginPage() {
   const handleOtpPaste = (e: React.ClipboardEvent) => {
     e.preventDefault();
     const digits = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6).split('');
-    const next = [...otp]; digits.forEach((d, i) => { next[i] = d; }); setOtp(next);
+    const next = [...otp];
+    digits.forEach((d, i) => {
+      next[i] = d;
+    });
+    setOtp(next);
     otpRefs.current[Math.min(digits.length, 5)]?.focus();
   };
 
   const handleOtpSubmit = (e: React.FormEvent) => {
-    e.preventDefault(); setLoading(true);
+    e.preventDefault();
+    setLoading(true);
     setTimeout(() => {
-      login({ id: 'u1', phone, name: 'Ahmet Yılmaz', city: 'İstanbul', verificationBadges: ['phone_verified', 'id_verified'], flatmateScore: 720 }, 'mock-token-xyz');
+      login({
+        id: 'u1',
+        phone: authMethod === 'phone' ? phone : '',
+        email: authMethod === 'email' ? email : undefined,
+        name: 'Ahmet Yılmaz',
+        city: 'İstanbul',
+        verificationBadges: authMethod === 'phone' ? ['phone_verified', 'id_verified'] : ['id_verified'],
+        flatmateScore: 720,
+      }, 'mock-token-xyz');
       router.push('/dashboard');
     }, 500);
+  };
+
+  const resetToContactStep = () => {
+    setOtp(['', '', '', '', '', '']);
+    setStep('contact');
   };
 
   return (
@@ -59,17 +90,42 @@ export default function LoginPage() {
           <h1 className="text-3xl font-serif font-light text-white mb-2">Hoş Geldin</h1>
           <p className="text-white/40 mb-8 text-sm">Hesabına giriş yap</p>
 
-          {step === 'phone' && (
-            <form onSubmit={handlePhoneSubmit} className="space-y-5">
+          {step === 'contact' && (
+            <form onSubmit={handleContactSubmit} className="space-y-5">
+              <div className="grid grid-cols-2 gap-2 rounded-full bg-white/5 p-1">
+                {(['phone', 'email'] as AuthMethod[]).map((method) => (
+                  <button
+                    key={method}
+                    type="button"
+                    onClick={() => setAuthMethod(method)}
+                    className={`rounded-full px-4 py-2 text-sm font-medium transition ${
+                      authMethod === method ? 'bg-white text-black' : 'text-white/50 hover:text-white'
+                    }`}
+                  >
+                    {method === 'phone' ? 'Telefon' : 'E-posta'}
+                  </button>
+                ))}
+              </div>
+
               <div>
-                <label className="block text-xs font-semibold text-white/60 mb-2 uppercase tracking-wider">Telefon Numarası</label>
-                <div className="relative">
-                  <Phone className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-white/30" size={18} />
-                  <input type="tel" placeholder="+90 5XX XXX XXXX" value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    className="input-field !pl-14" required />
+                <label className="block text-xs font-semibold text-white/60 mb-2 uppercase tracking-wider">
+                  {authMethod === 'phone' ? 'Telefon Numarası' : 'E-posta Adresi'}
+                </label>
+                <div className="flex items-center gap-3 rounded-lg border border-white/10 bg-zinc-800 px-4 transition-all focus-within:border-transparent focus-within:ring-2 focus-within:ring-[#E8192C]">
+                  {authMethod === 'phone'
+                    ? <Phone className="flex-shrink-0 text-white/30" size={18} />
+                    : <Mail className="flex-shrink-0 text-white/30" size={18} />}
+                  <input
+                    type={authMethod === 'phone' ? 'tel' : 'email'}
+                    placeholder={authMethod === 'phone' ? '+90 5XX XXX XXXX' : 'ornek@mail.com'}
+                    value={contactValue}
+                    onChange={(e) => authMethod === 'phone' ? setPhone(e.target.value) : setEmail(e.target.value)}
+                    className="min-w-0 flex-1 bg-transparent py-3 text-white placeholder:text-white/30 focus:outline-none"
+                    required
+                  />
                 </div>
               </div>
+
               <button type="submit" disabled={loading} className="btn-primary w-full disabled:opacity-40">
                 {loading ? 'Gönderiliyor...' : 'Doğrulama Kodu Gönder'}
               </button>
@@ -84,23 +140,31 @@ export default function LoginPage() {
             <form onSubmit={handleOtpSubmit} className="space-y-5">
               <div>
                 <label className="block text-xs font-semibold text-white/60 mb-2 uppercase tracking-wider">Doğrulama Kodu</label>
-                <p className="text-white/40 text-sm mb-4">{phone} numarasına gönderildi</p>
+                <p className="text-white/40 text-sm mb-4">{contactTarget} gönderildi</p>
                 <div className="grid grid-cols-6 gap-2" onPaste={handleOtpPaste}>
                   {otp.map((d, i) => (
-                    <input key={i} ref={(el) => { otpRefs.current[i] = el; }}
-                      type="text" inputMode="numeric" maxLength={1} value={d}
+                    <input
+                      key={i}
+                      ref={(el) => { otpRefs.current[i] = el; }}
+                      type="text"
+                      inputMode="numeric"
+                      maxLength={1}
+                      value={d}
                       onChange={(e) => handleOtpChange(i, e.target.value)}
                       onKeyDown={(e) => handleOtpKeyDown(i, e)}
-                      className="input-field text-center text-xl font-bold p-2" />
+                      className="input-field text-center text-xl font-bold p-2"
+                    />
                   ))}
                 </div>
               </div>
-              <button type="submit" disabled={loading || otp.join('').length !== 6}
-                className="btn-primary w-full disabled:opacity-40">
+              <button
+                type="submit"
+                disabled={loading || otp.join('').length !== 6}
+                className="btn-primary w-full disabled:opacity-40"
+              >
                 {loading ? 'Giriş Yapılıyor...' : 'Giriş Yap'}
               </button>
-              <button type="button" onClick={() => { setOtp(['','','','','','']); setStep('phone'); }}
-                className="w-full text-secondary text-sm hover:underline">
+              <button type="button" onClick={resetToContactStep} className="w-full text-secondary text-sm hover:underline">
                 ← Geri Dön
               </button>
             </form>

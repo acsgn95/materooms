@@ -50,10 +50,14 @@ export function DashboardHeader() {
       <div className="h-0.5 bg-secondary" />
 
       <div className="container-main py-3">
-        <div className="flex items-center justify-between">
-          <nav className="hidden lg:flex items-center gap-6">
+        <div className="flex items-center justify-between gap-4 lg:grid lg:grid-cols-[auto_minmax(0,1fr)_auto]">
+          <Link href="/dashboard" className="text-white font-bold tracking-[0.3em] text-xs uppercase">
+            {t('common.brand')}
+          </Link>
+
+          <nav className="hidden lg:flex min-w-0 items-center justify-center gap-4 xl:gap-6">
             {NAV_LINKS.map((link) => (
-              <Link key={link.href} href={link.href} className={`${linkClass(link.href)} relative`}>
+              <Link key={link.href} href={link.href} className={`${linkClass(link.href)} relative whitespace-nowrap`}>
                 {t(`dashboardHeader.nav.${link.labelKey}`)}
                 {link.badge && link.badge > 0 && (
                   <span className="absolute -top-2 -right-3 w-4 h-4 bg-secondary text-black text-xs rounded-full flex items-center justify-center font-bold">
@@ -63,16 +67,6 @@ export function DashboardHeader() {
               </Link>
             ))}
           </nav>
-
-          <Link
-            href="/dashboard"
-            className="absolute left-1/2 -translate-x-1/2 text-white font-bold tracking-[0.3em] text-xs uppercase hidden lg:block"
-          >
-            {t('common.brand')}
-          </Link>
-          <Link href="/dashboard" className="text-white font-bold tracking-[0.3em] text-xs uppercase lg:hidden">
-            {t('common.brand')}
-          </Link>
 
           <div className="hidden lg:flex items-center gap-3">
             <LanguageSwitcher />
