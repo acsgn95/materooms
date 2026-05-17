@@ -116,7 +116,7 @@ export default function RegisterPage() {
 
       <div className="flex-1 flex items-center justify-center p-4">
         <div className="w-full max-w-sm">
-          <Link href="/" className="block text-center text-white font-bold tracking-[0.3em] text-xs uppercase mb-10 hover:text-secondary transition">
+          <Link href="/" className="block text-center text-white font-bold tracking-[0.28em] text-2xl uppercase mb-10 hover:text-secondary transition">
             MateRooms
           </Link>
 
