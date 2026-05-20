@@ -6,12 +6,14 @@ import { useRouter } from 'next/navigation';
 import { Camera, Mail, Phone } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
 import { useI18n } from '@/i18n/I18nProvider';
+import { sendOtp, verifyOtp, registerWithTempToken, normalizePhone, isValidTrPhone } from '@/lib/auth';
+import { ApiCallError } from '@/lib/api';
 
 type AuthMethod = 'phone' | 'email';
 
 export default function RegisterPage() {
   const router = useRouter();
-  const login = useAuthStore((s) => s.login);
+  const setAuth = useAuthStore((s) => s.setAuth);
   const { t } = useI18n();
 
   const [step, setStep] = useState<'contact' | 'otp' | 'profile'>('contact');
@@ -19,7 +21,9 @@ export default function RegisterPage() {
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
+  const [tempToken, setTempToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const otpRefs = useRef<(HTMLInputElement | null)[]>([]);
   const photoRef = useRef<HTMLInputElement>(null);
@@ -41,6 +45,7 @@ export default function RegisterPage() {
     guests: '',
     noiseTolerance: '',
   });
+  const [kvkkConsent, setKvkkConsent] = useState(false);
 
   const steps = ['contact', 'otp', 'profile'];
   const stepIdx = steps.indexOf(step);
@@ -70,43 +75,91 @@ export default function RegisterPage() {
     otpRefs.current[Math.min(digits.length, 5)]?.focus();
   };
 
-  const submitContact = (e: React.FormEvent) => {
+  const submitContact = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
+    if (authMethod === 'email') {
+      setError('E-posta ile kayıt şu an desteklenmiyor. Lütfen telefon numarası kullanın.');
+      return;
+    }
+    if (!isValidTrPhone(phone)) {
+      setError('Telefon numarası geçersiz. +90 5XX XXX XX XX formatında girin.');
+      return;
+    }
     setLoading(true);
-    setTimeout(() => {
+    try {
+      await sendOtp(normalizePhone(phone), 'register');
       setStep('otp');
+    } catch (err) {
+      const e = err as ApiCallError;
+      setError(e.message || 'Kod gönderilemedi.');
+    } finally {
       setLoading(false);
-    }, 500);
+    }
   };
 
-  const submitOtp = (e: React.FormEvent) => {
+  const submitOtp = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
     setLoading(true);
-    setTimeout(() => {
+    try {
+      const { temp_token } = await verifyOtp(normalizePhone(phone), otp.join(''), 'register');
+      setTempToken(temp_token);
       setStep('profile');
+    } catch (err) {
+      const e = err as ApiCallError;
+      setError(e.message || 'Kod doğrulanamadı.');
+    } finally {
       setLoading(false);
-    }, 500);
+    }
   };
 
-  const submitProfile = (e: React.FormEvent) => {
+  const submitProfile = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
+    if (!tempToken) {
+      setError('Oturum süresi doldu, lütfen baştan başlayın.');
+      setStep('contact');
+      return;
+    }
+    if (!kvkkConsent) {
+      setError('Kayıt için KVKK aydınlatma metnini okuyup onaylamanız gerekir.');
+      return;
+    }
     setLoading(true);
-    setTimeout(() => {
-      login({
-        id: 'u1',
-        phone: authMethod === 'phone' ? phone : '',
-        email: authMethod === 'email' ? email : undefined,
-        name: profile.name,
+    try {
+      const auth = await registerWithTempToken(tempToken, {
+        full_name: profile.name,
+        age: profile.age ? Number(profile.age) : undefined,
+        gender: profile.gender || undefined,
         city: profile.city,
-        verificationBadges: authMethod === 'phone' ? ['phone_verified'] : [],
-        flatmateScore: 0,
-      }, 'mock-token-xyz');
+        neighborhood: profile.neighborhood || undefined,
+        occupation: profile.occupation || undefined,
+        budget_min: profile.budgetMin ? Number(profile.budgetMin) : undefined,
+        budget_max: profile.budgetMax ? Number(profile.budgetMax) : undefined,
+        bio: profile.bio || undefined,
+        sleep_schedule: profile.sleepSchedule || undefined,
+        cleanliness_level: profile.cleanlinessLevel || undefined,
+        smoking: profile.smoking,
+        pets: profile.pets,
+        guests: profile.guests || undefined,
+        noise_tolerance: profile.noiseTolerance || undefined,
+        kvkk_consent: kvkkConsent,
+      });
+      setAuth(auth.user);
       router.push('/dashboard');
-    }, 500);
+    } catch (err) {
+      const e = err as ApiCallError;
+      setError(e.message || 'Kayıt başarısız.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const resetToContactStep = () => {
     setOtp(['', '', '', '', '', '']);
+    setError(null);
+    setTempToken(null);
     setStep('contact');
   };
 
@@ -128,6 +181,12 @@ export default function RegisterPage() {
               <div key={i} className={`h-0.5 flex-1 rounded-full transition-colors ${i <= stepIdx ? 'bg-secondary' : 'bg-white/10'}`} />
             ))}
           </div>
+
+          {error && (
+            <div className="mb-5 rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
+              {error}
+            </div>
+          )}
 
           {step === 'contact' && (
             <form onSubmit={submitContact} className="space-y-5">
@@ -365,7 +424,25 @@ export default function RegisterPage() {
                 </div>
               </div>
 
-              <button type="submit" disabled={loading || !profile.name || !profile.city} className="btn-primary w-full disabled:opacity-40 mt-2">
+              <div className="border-t border-white/10 pt-4">
+                <label className="flex items-start gap-3 cursor-pointer text-sm text-white/70">
+                  <input
+                    type="checkbox"
+                    checked={kvkkConsent}
+                    onChange={(e) => setKvkkConsent(e.target.checked)}
+                    className="accent-secondary mt-0.5 flex-shrink-0"
+                  />
+                  <span>
+                    <Link href="/legal/kvkk" target="_blank" className="text-secondary hover:underline">KVKK Aydınlatma Metni</Link>
+                    {"'ni okudum, kişisel verilerimin platform işleyişi için işlenmesine açık rıza veriyorum."}
+                  </span>
+                </label>
+                <p className="mt-2 text-xs text-amber-400/80">
+                  Bu uygulama bir <strong>demo/test</strong> ortamıdır. Gerçek kimlik veya hassas veri girmeyiniz.
+                </p>
+              </div>
+
+              <button type="submit" disabled={loading || !profile.name || !profile.city || !kvkkConsent} className="btn-primary w-full disabled:opacity-40 mt-2">
                 {loading ? t('auth.buttons.saving') : t('auth.buttons.start')}
               </button>
             </form>

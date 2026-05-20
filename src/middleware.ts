@@ -2,12 +2,15 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 const PUBLIC_PATHS = ['/', '/auth/login', '/auth/register'];
+const PUBLIC_PREFIXES = ['/legal/'];
 
 export function middleware(request: NextRequest) {
   const token = request.cookies.get('auth-token')?.value;
   const { pathname } = request.nextUrl;
 
-  const isPublic = PUBLIC_PATHS.some((p) => pathname === p);
+  const isPublic =
+    PUBLIC_PATHS.some((p) => pathname === p) ||
+    PUBLIC_PREFIXES.some((p) => pathname.startsWith(p));
 
   if (!isPublic && !token) {
     const url = request.nextUrl.clone();

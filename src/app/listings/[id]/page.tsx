@@ -1,53 +1,79 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { DashboardHeader } from '@/components/common/DashboardHeader';
 import { VerificationBadges, ScoreBadge } from '@/components/common/DashboardHeader';
 import { ArrowLeft, MapPin, Users, Calendar, Wifi, Sofa, WashingMachine, Wind, MessageSquare, Heart, Share2, Flag } from 'lucide-react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useI18n } from '@/i18n/I18nProvider';
+import { getListing } from '@/lib/listings';
+import { ApiCallError } from '@/lib/api';
+import type { Listing } from '@/types/api';
 
 export default function ListingDetailPage() {
-  const params = useParams();
+  const params = useParams<{ id: string }>();
   const { locale, t } = useI18n();
   const dateLocale = locale === 'tr' ? 'tr-TR' : 'en-US';
 
-  const listing = {
-    id: params.id,
-    type: 'room_available',
-    monthlyRent: { full: 15000, perPerson: 7500 },
-    moveInDate: '2026-05-01',
-    residents: { current: 1, total: 2 },
-    houseRules: {
-      smoking: false,
-      pets: false,
-      genderPreference: 'any',
-      quietHours: { start: '23:00', end: '08:00' },
-    },
-    amenities: ['furnished', 'internet', 'washing_machine', 'balcony', 'ac'],
-    photos: ['🏘️', '🛋️', '🛏️', '🚿'],
-    expiresAt: '2026-06-20',
-    createdAt: '2026-04-20',
+  const [listing, setListing] = useState<Listing | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!params.id) return;
+    (async () => {
+      try {
+        const data = await getListing(params.id);
+        setListing(data);
+      } catch (err) {
+        const e = err as ApiCallError;
+        setError(e.message || 'İlan bulunamadı.');
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, [params.id]);
+
+  const amenityIcons: Record<string, React.ReactNode> = {
+    furnished: <Sofa size={16} />,
+    internet: <Wifi size={16} />,
+    washing_machine: <WashingMachine size={16} />,
+    balcony: <Wind size={16} />,
+    ac: <Wind size={16} />,
   };
 
-  const owner = {
-    id: 'u1',
-    age: 27,
-    verificationBadges: ['phone_verified', 'id_verified'],
-    flatmateScore: 720,
-    memberSince: '2026-01-01',
-  };
+  if (loading) {
+    return (
+      <div className="min-h-dvh bg-black">
+        <DashboardHeader />
+        <main className="container-main py-12 text-center text-white/40">Yükleniyor...</main>
+      </div>
+    );
+  }
 
-  const amenityLabels: Record<string, { label: string; icon: React.ReactNode }> = {
-    furnished: { label: t('common.amenities.furnished'), icon: <Sofa size={16} /> },
-    internet: { label: t('common.amenities.internet'), icon: <Wifi size={16} /> },
-    washing_machine: { label: t('common.amenities.washing_machine'), icon: <WashingMachine size={16} /> },
-    balcony: { label: t('common.amenities.balcony'), icon: <Wind size={16} /> },
-    ac: { label: t('common.amenities.ac'), icon: <Wind size={16} /> },
-  };
-  const ownerName = t('listingDetail.mock.owner.name');
-  const ownerBio = t('listingDetail.mock.owner.bio');
-  const ownerOccupation = t('listingDetail.mock.owner.occupation');
+  if (error || !listing) {
+    return (
+      <div className="min-h-dvh bg-black">
+        <DashboardHeader />
+        <main className="container-main py-12">
+          <Link href="/listings" className="flex items-center gap-2 text-white/40 hover:text-white mb-8 transition">
+            <ArrowLeft size={20} />
+            {t('listingDetail.back')}
+          </Link>
+          <div className="text-center py-12">
+            <p className="text-white mb-2 text-xl">{error || 'İlan bulunamadı'}</p>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  const ownerName = listing.owner?.full_name ?? '—';
+  const ownerScore = listing.owner?.flatmate_score ?? 0;
+  const ownerBadges = listing.owner?.verification_badges ?? [];
+  const houseRules = listing.house_rules ?? {};
+  const photos = listing.photos ?? [];
 
   return (
     <div className="min-h-dvh bg-black">
@@ -60,31 +86,38 @@ export default function ListingDetailPage() {
         </Link>
 
         <div className="grid lg:grid-cols-3 gap-8">
-          {/* Left — Main Content */}
           <div className="lg:col-span-2 space-y-6">
-            {/* Photo Gallery */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 h-auto sm:h-64">
-              <div className="col-span-2 sm:row-span-2 min-h-48 sm:min-h-0 bg-zinc-800 rounded-xl flex items-center justify-center text-7xl sm:text-8xl">
-                {listing.photos[0]}
-              </div>
-              {listing.photos.slice(1).map((p, i) => (
-                <div key={i} className="min-h-24 sm:min-h-0 bg-zinc-800 rounded-xl flex items-center justify-center text-3xl sm:text-4xl">
-                  {p}
+              {photos.length > 0 ? (
+                <>
+                  <div className="col-span-2 sm:row-span-2 min-h-48 sm:min-h-0 bg-zinc-800 rounded-xl overflow-hidden">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={photos[0].url} alt="" className="w-full h-full object-cover" />
+                  </div>
+                  {photos.slice(1, 5).map((p) => (
+                    <div key={p.id} className="min-h-24 sm:min-h-0 bg-zinc-800 rounded-xl overflow-hidden">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={p.url} alt="" className="w-full h-full object-cover" />
+                    </div>
+                  ))}
+                </>
+              ) : (
+                <div className="col-span-2 sm:col-span-4 sm:row-span-2 min-h-48 bg-zinc-800 rounded-xl flex items-center justify-center text-7xl">
+                  🏘️
                 </div>
-              ))}
+              )}
             </div>
 
-            {/* Title & Actions */}
             <div className="card">
               <div className="flex flex-col gap-4 mb-4 sm:flex-row sm:justify-between sm:items-start">
                 <div className="min-w-0">
                   <span className="text-xs font-semibold text-secondary bg-secondary/10 px-2 py-1 rounded-full mb-2 inline-block">
-                    {t(`common.listingTypes.${listing.type}`)}
+                    {t(`common.listingTypes.${listing.listing_type}`)}
                   </span>
-                  <h1 className="text-2xl sm:text-3xl font-serif font-light text-white">{t('listingDetail.mock.listing.title')}</h1>
+                  <h1 className="text-2xl sm:text-3xl font-serif font-light text-white">{listing.title}</h1>
                   <div className="flex items-start gap-2 text-white/40 mt-2 text-sm sm:items-center">
                     <MapPin size={16} className="text-secondary" />
-                    {t('listingDetail.mock.listing.city')} / {t('listingDetail.mock.listing.district')} / {t('listingDetail.mock.listing.neighborhood')}
+                    {listing.city}{listing.district ? ` / ${listing.district}` : ''}{listing.neighborhood ? ` / ${listing.neighborhood}` : ''}
                   </div>
                 </div>
                 <div className="flex gap-2">
@@ -103,75 +136,69 @@ export default function ListingDetailPage() {
               <div className="grid grid-cols-1 gap-4 py-4 border-y border-white/10 sm:grid-cols-3">
                 <div className="text-center">
                   <p className="text-2xl font-bold text-secondary">
-                    ₺{listing.monthlyRent.perPerson?.toLocaleString(dateLocale)}
+                    ₺{(listing.rent_per_person ?? listing.rent_full).toLocaleString(dateLocale)}
                   </p>
                   <p className="text-xs text-white/40">{t('listingDetail.metrics.rentPerPerson')}</p>
                 </div>
                 <div className="text-center">
                   <div className="flex items-center justify-center gap-1 text-xl font-bold text-white">
                     <Users size={20} className="text-secondary" />
-                    {listing.residents.current}/{listing.residents.total}
+                    {listing.residents_current}/{listing.residents_total}
                   </div>
                   <p className="text-xs text-white/40">{t('listingDetail.metrics.residents')}</p>
                 </div>
                 <div className="text-center">
                   <div className="flex items-center justify-center gap-1 text-xl font-bold text-white">
                     <Calendar size={20} className="text-secondary" />
-                    {new Date(listing.moveInDate).toLocaleDateString(dateLocale, { day: 'numeric', month: 'short' })}
+                    {new Date(listing.move_in_date).toLocaleDateString(dateLocale, { day: 'numeric', month: 'short' })}
                   </div>
                   <p className="text-xs text-white/40">{t('listingDetail.metrics.moveIn')}</p>
                 </div>
               </div>
 
-              <p className="mt-4 text-white/60 leading-relaxed">{t('listingDetail.mock.listing.description')}</p>
+              {listing.description && (
+                <p className="mt-4 text-white/60 leading-relaxed whitespace-pre-wrap">{listing.description}</p>
+              )}
             </div>
 
-            {/* Amenities */}
-            <div className="card">
-              <h2 className="text-xl font-semibold text-white mb-4">{t('listingDetail.sections.amenities')}</h2>
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                {listing.amenities.map((a) => {
-                  const config = amenityLabels[a];
-                  return config ? (
+            {listing.amenities.length > 0 && (
+              <div className="card">
+                <h2 className="text-xl font-semibold text-white mb-4">{t('listingDetail.sections.amenities')}</h2>
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                  {listing.amenities.map((a) => (
                     <div key={a} className="flex items-center gap-2 p-3 bg-zinc-800 rounded-lg text-sm font-medium text-white/70">
-                      <span className="text-secondary">{config.icon}</span>
-                      {config.label}
+                      <span className="text-secondary">{amenityIcons[a] ?? <Wifi size={16} />}</span>
+                      {t(`common.amenities.${a}`)}
                     </div>
-                  ) : null;
-                })}
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
-            {/* House Rules */}
             <div className="card">
               <h2 className="text-xl font-semibold text-white mb-4">{t('listingDetail.sections.rules')}</h2>
               <div className="grid grid-cols-1 gap-3 text-sm sm:grid-cols-2">
-                <div className={`flex items-center gap-2 p-3 rounded-lg ${listing.houseRules.smoking ? 'bg-red-500/10 text-red-400' : 'bg-secondary/10 text-secondary'}`}>
-                  {listing.houseRules.smoking ? t('listingDetail.rules.smokingAllowed') : t('listingDetail.rules.smokingForbidden')}
+                <div className={`flex items-center gap-2 p-3 rounded-lg ${houseRules.smoking ? 'bg-red-500/10 text-red-400' : 'bg-secondary/10 text-secondary'}`}>
+                  {houseRules.smoking ? t('listingDetail.rules.smokingAllowed') : t('listingDetail.rules.smokingForbidden')}
                 </div>
-                <div className={`flex items-center gap-2 p-3 rounded-lg ${listing.houseRules.pets ? 'bg-secondary/10 text-secondary' : 'bg-red-500/10 text-red-400'}`}>
-                  {listing.houseRules.pets ? t('listingDetail.rules.petsAllowed') : t('listingDetail.rules.petsForbidden')}
-                </div>
-                <div className="flex items-center gap-2 p-3 rounded-lg bg-white/5 text-white/60">
-                  {t('listingDetail.rules.quietHours', { start: listing.houseRules.quietHours?.start, end: listing.houseRules.quietHours?.end })}
+                <div className={`flex items-center gap-2 p-3 rounded-lg ${houseRules.pets ? 'bg-secondary/10 text-secondary' : 'bg-red-500/10 text-red-400'}`}>
+                  {houseRules.pets ? t('listingDetail.rules.petsAllowed') : t('listingDetail.rules.petsForbidden')}
                 </div>
                 <div className="flex items-center gap-2 p-3 rounded-lg bg-white/5 text-white/60">
-                  {t('listingDetail.rules.gender', { gender: t(`common.gender.${listing.houseRules.genderPreference}`) })}
+                  {t('listingDetail.rules.gender', { gender: t(`common.gender.${houseRules.gender_preference ?? 'any'}`) })}
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Right — Owner & CTA */}
           <div className="space-y-6">
-            {/* CTA */}
             <div className="card lg:sticky lg:top-24">
               <div className="text-center mb-6">
                 <p className="text-3xl font-bold text-secondary">
-                  ₺{listing.monthlyRent.perPerson?.toLocaleString(dateLocale)}
+                  ₺{(listing.rent_per_person ?? listing.rent_full).toLocaleString(dateLocale)}
                   <span className="text-base font-normal text-white/40">{t('listingDetail.cta.perMonth')}</span>
                 </p>
-                <p className="text-sm text-white/40">{t('listingDetail.cta.totalRent', { amount: listing.monthlyRent.full.toLocaleString(dateLocale) })}</p>
+                <p className="text-sm text-white/40">{t('listingDetail.cta.totalRent', { amount: listing.rent_full.toLocaleString(dateLocale) })}</p>
               </div>
 
               <Link href="/messages" className="btn-primary w-full flex items-center justify-center gap-2 mb-3">
@@ -181,11 +208,10 @@ export default function ListingDetailPage() {
               <button className="btn-outline w-full">{t('listingDetail.cta.favorite')}</button>
 
               <div className="mt-4 pt-4 border-t border-white/10 text-xs text-white/30 text-center">
-                {t('listingDetail.cta.validUntil', { date: new Date(listing.expiresAt).toLocaleDateString(dateLocale) })}
+                {t('listingDetail.cta.validUntil', { date: new Date(listing.expires_at).toLocaleDateString(dateLocale) })}
               </div>
             </div>
 
-            {/* Owner Card */}
             <div className="card">
               <h3 className="font-semibold text-white mb-4">{t('listingDetail.sections.owner')}</h3>
               <div className="flex items-start gap-4 mb-4">
@@ -194,24 +220,18 @@ export default function ListingDetailPage() {
                 </div>
                 <div>
                   <p className="font-bold text-lg text-white">{ownerName}</p>
-                  <p className="text-sm text-white/40">{t('listingDetail.owner.ageOccupation', { age: owner.age, occupation: ownerOccupation })}</p>
-                  <p className="text-xs text-white/30 mt-1">
-                    {t('listingDetail.owner.memberSince', { date: new Date(owner.memberSince).toLocaleDateString(dateLocale, { year: 'numeric', month: 'long' }) })}
-                  </p>
                 </div>
               </div>
 
-              <div className="mb-4">
-                <VerificationBadges badges={owner.verificationBadges} />
-              </div>
-
-              <div className="mb-4">
-                <ScoreBadge score={owner.flatmateScore} />
-              </div>
-
-              {ownerBio && (
-                <p className="text-sm text-white/40 italic border-t border-white/10 pt-3">"{ownerBio}"</p>
+              {ownerBadges.length > 0 && (
+                <div className="mb-4">
+                  <VerificationBadges badges={ownerBadges} />
+                </div>
               )}
+
+              <div className="mb-4">
+                <ScoreBadge score={ownerScore} />
+              </div>
             </div>
           </div>
         </div>

@@ -2,13 +2,20 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { DashboardHeader } from '@/components/common/DashboardHeader';
 import { ArrowLeft, Upload } from 'lucide-react';
 import { useI18n } from '@/i18n/I18nProvider';
+import { createListing } from '@/lib/listings';
+import { ApiCallError } from '@/lib/api';
+import type { ListingType } from '@/types/api';
 
 export default function CreateListingPage() {
   const { t } = useI18n();
+  const router = useRouter();
   const [step, setStep] = useState<'type' | 'details' | 'amenities' | 'photos'>('type');
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     type: '',
     title: '',
@@ -50,12 +57,40 @@ export default function CreateListingPage() {
     });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (step === 'type') setStep('details');
-    else if (step === 'details') setStep('amenities');
-    else if (step === 'amenities') setStep('photos');
-    else window.location.href = '/dashboard';
+    if (step === 'type') { setStep('details'); return; }
+    if (step === 'details') { setStep('amenities'); return; }
+    if (step === 'amenities') { setStep('photos'); return; }
+
+    setError(null);
+    setSubmitting(true);
+    try {
+      const created = await createListing({
+        listing_type: formData.type as ListingType,
+        title: formData.title,
+        description: formData.description || undefined,
+        city: formData.city,
+        district: formData.district,
+        neighborhood: formData.neighborhood || undefined,
+        rent_full: Number(formData.monthlyRent),
+        rent_per_person: formData.perPersonRent ? Number(formData.perPersonRent) : undefined,
+        move_in_date: formData.moveInDate,
+        residents_current: formData.currentResidents ? Number(formData.currentResidents) : 0,
+        residents_total: Number(formData.totalResidents),
+        house_rules: {
+          smoking: formData.smoking,
+          pets: formData.pets,
+          gender_preference: formData.genderPreference,
+        },
+        amenities: formData.amenities,
+      });
+      router.push(`/listings/${created.id}`);
+    } catch (err) {
+      const e = err as ApiCallError;
+      setError(e.message || 'İlan oluşturulamadı.');
+      setSubmitting(false);
+    }
   };
 
   const stepIdx = steps.indexOf(step);
@@ -79,6 +114,12 @@ export default function CreateListingPage() {
               <div key={i} className={`h-0.5 flex-1 rounded-full transition-colors ${i <= stepIdx ? 'bg-secondary' : 'bg-white/10'}`} />
             ))}
           </div>
+
+          {error && (
+            <div className="mb-5 rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
+              {error}
+            </div>
+          )}
 
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Step 1: Listing Type */}
@@ -247,15 +288,17 @@ export default function CreateListingPage() {
               <div className="card space-y-4">
                 <h2 className="text-xl sm:text-2xl font-semibold text-white mb-6">{t('createListing.steps.photosTitle')}</h2>
 
-                <div className="border-2 border-dashed border-white/20 rounded-lg p-6 sm:p-12 text-center cursor-pointer hover:border-secondary/50 hover:bg-secondary/5 transition">
+                <div className="border-2 border-dashed border-white/20 rounded-lg p-6 sm:p-12 text-center">
                   <Upload className="mx-auto mb-4 text-white/30" size={40} />
-                  <p className="font-semibold text-white mb-1">{t('createListing.photos.drop')}</p>
-                  <p className="text-sm text-white/40">{t('createListing.photos.select')}</p>
+                  <p className="font-semibold text-white mb-1">Foto yükleme yakında</p>
+                  <p className="text-sm text-white/40">MVP&apos;de fotoğraf yükleme henüz aktif değil — ilanınız fotoğrafsız oluşturulacak.</p>
                 </div>
 
                 <div className="flex flex-col gap-3 pt-8 sm:flex-row sm:gap-4">
-                  <button type="button" onClick={() => setStep('amenities')} className="btn-outline flex-1">{t('common.actions.back')}</button>
-                  <button type="submit" className="btn-primary flex-1">{t('createListing.actions.create')}</button>
+                  <button type="button" onClick={() => setStep('amenities')} className="btn-outline flex-1" disabled={submitting}>{t('common.actions.back')}</button>
+                  <button type="submit" className="btn-primary flex-1 disabled:opacity-50" disabled={submitting}>
+                    {submitting ? 'Oluşturuluyor...' : t('createListing.actions.create')}
+                  </button>
                 </div>
               </div>
             )}

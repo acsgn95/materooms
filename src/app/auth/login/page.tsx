@@ -6,12 +6,14 @@ import { useRouter } from 'next/navigation';
 import { Mail, Phone } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
 import { useI18n } from '@/i18n/I18nProvider';
+import { sendOtp, loginWithCode, normalizePhone, isValidTrPhone } from '@/lib/auth';
+import { ApiCallError } from '@/lib/api';
 
 type AuthMethod = 'phone' | 'email';
 
 export default function LoginPage() {
   const router = useRouter();
-  const login = useAuthStore((s) => s.login);
+  const setAuth = useAuthStore((s) => s.setAuth);
   const { t } = useI18n();
 
   const [step, setStep] = useState<'contact' | 'otp'>('contact');
@@ -20,18 +22,35 @@ export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const otpRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   const contactValue = authMethod === 'phone' ? phone : email;
   const contactTarget = t(`auth.contactTarget.${authMethod}`, { value: contactValue });
 
-  const handleContactSubmit = (e: React.FormEvent) => {
+  const handleContactSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
+
+    if (authMethod === 'email') {
+      setError('E-posta ile giriş şu an desteklenmiyor. Lütfen telefon numarası kullanın.');
+      return;
+    }
+    if (!isValidTrPhone(phone)) {
+      setError('Telefon numarası geçersiz. +90 5XX XXX XX XX formatında girin.');
+      return;
+    }
+
     setLoading(true);
-    setTimeout(() => {
+    try {
+      await sendOtp(normalizePhone(phone), 'login');
       setStep('otp');
+    } catch (err) {
+      const e = err as ApiCallError;
+      setError(e.message || 'Kod gönderilemedi.');
+    } finally {
       setLoading(false);
-    }, 500);
+    }
   };
 
   const handleOtpChange = (i: number, v: string) => {
@@ -57,25 +76,25 @@ export default function LoginPage() {
     otpRefs.current[Math.min(digits.length, 5)]?.focus();
   };
 
-  const handleOtpSubmit = (e: React.FormEvent) => {
+  const handleOtpSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
     setLoading(true);
-    setTimeout(() => {
-      login({
-        id: 'u1',
-        phone: authMethod === 'phone' ? phone : '',
-        email: authMethod === 'email' ? email : undefined,
-        name: 'Ahmet Yılmaz',
-        city: 'İstanbul',
-        verificationBadges: authMethod === 'phone' ? ['phone_verified', 'id_verified'] : ['id_verified'],
-        flatmateScore: 720,
-      }, 'mock-token-xyz');
+    try {
+      const auth = await loginWithCode(normalizePhone(phone), otp.join(''));
+      setAuth(auth.user);
       router.push('/dashboard');
-    }, 500);
+    } catch (err) {
+      const e = err as ApiCallError;
+      setError(e.message || 'Giriş başarısız.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const resetToContactStep = () => {
     setOtp(['', '', '', '', '', '']);
+    setError(null);
     setStep('contact');
   };
 
@@ -91,6 +110,12 @@ export default function LoginPage() {
 
           <h1 className="text-3xl font-serif font-light text-white mb-2">{t('auth.welcome')}</h1>
           <p className="text-white/40 mb-8 text-sm">{t('auth.loginSubtitle')}</p>
+
+          {error && (
+            <div className="mb-5 rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
+              {error}
+            </div>
+          )}
 
           {step === 'contact' && (
             <form onSubmit={handleContactSubmit} className="space-y-5">

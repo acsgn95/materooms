@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { I18nProvider } from "@/i18n/I18nProvider";
+import { DemoBanner } from "@/components/common/DemoBanner";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -15,7 +16,10 @@ export default function RootLayout({
   return (
     <html lang="tr">
       <body className="bg-light text-dark">
-        <I18nProvider>{children}</I18nProvider>
+        <I18nProvider>
+          <DemoBanner />
+          {children}
+        </I18nProvider>
       </body>
     </html>
   );
