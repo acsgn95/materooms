@@ -60,6 +60,46 @@ export async function registerWithTempToken(
   return auth;
 }
 
+export async function loginWithEmail(email: string, password: string): Promise<AuthResponse> {
+  const auth = await callApi<AuthResponse>({
+    method: 'POST',
+    url: '/auth/login/email',
+    data: { email, password },
+  });
+  tokenStorage.set(auth.access_token, auth.refresh_token);
+  return auth;
+}
+
+export async function registerWithEmail(
+  email: string,
+  password: string,
+  payload: RegisterPayload
+): Promise<AuthResponse> {
+  const auth = await callApi<AuthResponse>({
+    method: 'POST',
+    url: '/auth/register/email',
+    data: { email, password, ...payload },
+  });
+  tokenStorage.set(auth.access_token, auth.refresh_token);
+  return auth;
+}
+
+export function requestPasswordReset(email: string) {
+  return callApi<{ message: string }>({
+    method: 'POST',
+    url: '/auth/password-reset/request',
+    data: { email },
+  });
+}
+
+export function confirmPasswordReset(token: string, password: string) {
+  return callApi<{ message: string }>({
+    method: 'POST',
+    url: '/auth/password-reset/confirm',
+    data: { token, password },
+  });
+}
+
 export function logout() {
   tokenStorage.clear();
 }

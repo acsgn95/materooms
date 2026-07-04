@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { Mail, Phone } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
 import { useI18n } from '@/i18n/I18nProvider';
-import { sendOtp, loginWithCode, normalizePhone, isValidTrPhone } from '@/lib/auth';
+import { sendOtp, loginWithCode, loginWithEmail, normalizePhone, isValidTrPhone } from '@/lib/auth';
 import { ApiCallError } from '@/lib/api';
 
 type AuthMethod = 'phone' | 'email';
@@ -20,6 +20,7 @@ export default function LoginPage() {
   const [authMethod, setAuthMethod] = useState<AuthMethod>('phone');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -33,9 +34,20 @@ export default function LoginPage() {
     setError(null);
 
     if (authMethod === 'email') {
-      setError('E-posta ile giriş şu an desteklenmiyor. Lütfen telefon numarası kullanın.');
+      setLoading(true);
+      try {
+        const auth = await loginWithEmail(email, password);
+        setAuth(auth.user);
+        router.push('/dashboard');
+      } catch (err) {
+        const e = err as ApiCallError;
+        setError(e.message || 'E-posta veya şifre hatalı.');
+      } finally {
+        setLoading(false);
+      }
       return;
     }
+
     if (!isValidTrPhone(phone)) {
       setError('Telefon numarası geçersiz. +90 5XX XXX XX XX formatında girin.');
       return;
@@ -153,8 +165,25 @@ export default function LoginPage() {
                 </div>
               </div>
 
+              {authMethod === 'email' && (
+                <div>
+                  <label className="block text-xs font-semibold text-white/60 mb-2 uppercase tracking-wider">Şifre</label>
+                  <input
+                    type="password"
+                    placeholder="••••••••"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="input-field w-full"
+                    required
+                  />
+                  <div className="text-right mt-1">
+                    <Link href="/auth/reset-password" className="text-xs text-secondary hover:underline">Şifremi unuttum</Link>
+                  </div>
+                </div>
+              )}
+
               <button type="submit" disabled={loading} className="btn-primary w-full disabled:opacity-40">
-                {loading ? t('auth.buttons.sending') : t('auth.buttons.sendOtp')}
+                {loading ? (authMethod === 'email' ? 'Giriş yapılıyor...' : t('auth.buttons.sending')) : (authMethod === 'email' ? 'Giriş Yap' : t('auth.buttons.sendOtp'))}
               </button>
               <p className="text-center text-sm text-white/40">
                 {t('auth.links.noAccount')}{' '}

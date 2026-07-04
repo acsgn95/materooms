@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-const PUBLIC_PATHS = ['/', '/auth/login', '/auth/register', '/admin/login'];
+const PUBLIC_PATHS = ['/', '/auth/login', '/auth/register', '/auth/reset-password', '/admin/login'];
 const PUBLIC_PREFIXES = ['/legal/'];
 
 export function middleware(request: NextRequest) {

@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { Camera, Mail, Phone } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
 import { useI18n } from '@/i18n/I18nProvider';
-import { sendOtp, verifyOtp, registerWithTempToken, normalizePhone, isValidTrPhone } from '@/lib/auth';
+import { sendOtp, verifyOtp, registerWithTempToken, registerWithEmail, normalizePhone, isValidTrPhone } from '@/lib/auth';
 import { ApiCallError } from '@/lib/api';
 
 type AuthMethod = 'phone' | 'email';
@@ -20,6 +20,7 @@ export default function RegisterPage() {
   const [authMethod, setAuthMethod] = useState<AuthMethod>('phone');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
+  const [emailPassword, setEmailPassword] = useState('');
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [tempToken, setTempToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -79,7 +80,11 @@ export default function RegisterPage() {
     e.preventDefault();
     setError(null);
     if (authMethod === 'email') {
-      setError('E-posta ile kayıt şu an desteklenmiyor. Lütfen telefon numarası kullanın.');
+      if (emailPassword.length < 8) {
+        setError('Şifre en az 8 karakter olmalı.');
+        return;
+      }
+      setStep('profile');
       return;
     }
     if (!isValidTrPhone(phone)) {
@@ -117,35 +122,43 @@ export default function RegisterPage() {
   const submitProfile = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-    if (!tempToken) {
-      setError('Oturum süresi doldu, lütfen baştan başlayın.');
-      setStep('contact');
-      return;
-    }
     if (!kvkkConsent) {
       setError('Kayıt için KVKK aydınlatma metnini okuyup onaylamanız gerekir.');
       return;
     }
     setLoading(true);
+
+    const profilePayload = {
+      full_name: profile.name,
+      age: profile.age ? Number(profile.age) : undefined,
+      gender: profile.gender || undefined,
+      city: profile.city,
+      neighborhood: profile.neighborhood || undefined,
+      occupation: profile.occupation || undefined,
+      budget_min: profile.budgetMin ? Number(profile.budgetMin) : undefined,
+      budget_max: profile.budgetMax ? Number(profile.budgetMax) : undefined,
+      bio: profile.bio || undefined,
+      sleep_schedule: profile.sleepSchedule || undefined,
+      cleanliness_level: profile.cleanlinessLevel || undefined,
+      smoking: profile.smoking,
+      pets: profile.pets,
+      guests: profile.guests || undefined,
+      noise_tolerance: profile.noiseTolerance || undefined,
+      kvkk_consent: kvkkConsent,
+    };
+
     try {
-      const auth = await registerWithTempToken(tempToken, {
-        full_name: profile.name,
-        age: profile.age ? Number(profile.age) : undefined,
-        gender: profile.gender || undefined,
-        city: profile.city,
-        neighborhood: profile.neighborhood || undefined,
-        occupation: profile.occupation || undefined,
-        budget_min: profile.budgetMin ? Number(profile.budgetMin) : undefined,
-        budget_max: profile.budgetMax ? Number(profile.budgetMax) : undefined,
-        bio: profile.bio || undefined,
-        sleep_schedule: profile.sleepSchedule || undefined,
-        cleanliness_level: profile.cleanlinessLevel || undefined,
-        smoking: profile.smoking,
-        pets: profile.pets,
-        guests: profile.guests || undefined,
-        noise_tolerance: profile.noiseTolerance || undefined,
-        kvkk_consent: kvkkConsent,
-      });
+      let auth;
+      if (authMethod === 'email') {
+        auth = await registerWithEmail(email, emailPassword, profilePayload);
+      } else {
+        if (!tempToken) {
+          setError('Oturum süresi doldu, lütfen baştan başlayın.');
+          setStep('contact');
+          return;
+        }
+        auth = await registerWithTempToken(tempToken, profilePayload);
+      }
       setAuth(auth.user);
       router.push('/dashboard');
     } catch (err) {
@@ -224,8 +237,23 @@ export default function RegisterPage() {
                 </div>
               </div>
 
+              {authMethod === 'email' && (
+                <div>
+                  <label className="block text-xs font-semibold text-white/60 mb-2 uppercase tracking-wider">Şifre</label>
+                  <input
+                    type="password"
+                    placeholder="En az 8 karakter"
+                    value={emailPassword}
+                    onChange={(e) => setEmailPassword(e.target.value)}
+                    className="input-field w-full"
+                    required
+                    minLength={8}
+                  />
+                </div>
+              )}
+
               <button type="submit" disabled={loading} className="btn-primary w-full disabled:opacity-40">
-                {loading ? t('auth.buttons.sending') : t('auth.buttons.sendCode')}
+                {loading ? t('auth.buttons.sending') : (authMethod === 'email' ? 'Devam Et' : t('auth.buttons.sendCode'))}
               </button>
               <p className="text-center text-sm text-white/40">
                 {t('auth.links.haveAccount')} <Link href="/auth/login" className="text-secondary hover:underline">{t('auth.links.login')}</Link>
