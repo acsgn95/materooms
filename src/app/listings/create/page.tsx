@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { DashboardHeader } from '@/components/common/DashboardHeader';
@@ -9,6 +10,9 @@ import { useI18n } from '@/i18n/I18nProvider';
 import { createListing } from '@/lib/listings';
 import { ApiCallError } from '@/lib/api';
 import type { ListingType } from '@/types/api';
+import { CITY_NAMES, getCityCoords } from '@/lib/cities';
+
+const LocationPicker = dynamic(() => import('@/components/LocationPicker'), { ssr: false });
 
 export default function CreateListingPage() {
   const { t } = useI18n();
@@ -32,6 +36,8 @@ export default function CreateListingPage() {
     pets: false,
     genderPreference: 'mixed',
     amenities: [] as string[],
+    latitude: null as number | null,
+    longitude: null as number | null,
   });
 
   const amenitiesList = [
@@ -45,7 +51,6 @@ export default function CreateListingPage() {
     'parking',
   ];
 
-  const cities = ['istanbul', 'ankara', 'izmir'];
   const steps = ['type', 'details', 'amenities', 'photos'];
 
   const toggleAmenity = (id: string) => {
@@ -84,6 +89,8 @@ export default function CreateListingPage() {
           gender_preference: formData.genderPreference,
         },
         amenities: formData.amenities,
+        latitude: formData.latitude ?? undefined,
+        longitude: formData.longitude ?? undefined,
       });
       router.push(`/listings/${created.id}`);
     } catch (err) {
@@ -174,10 +181,21 @@ export default function CreateListingPage() {
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div>
                     <label className="block text-xs font-semibold text-white/60 mb-2 uppercase tracking-wider">{t('createListing.fields.city')}</label>
-                    <select value={formData.city} onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                    <select
+                      value={formData.city}
+                      onChange={(e) => {
+                        const city = e.target.value;
+                        const coords = getCityCoords(city);
+                        setFormData({
+                          ...formData,
+                          city,
+                          latitude: coords?.lat ?? formData.latitude,
+                          longitude: coords?.lng ?? formData.longitude,
+                        });
+                      }}
                       className="input-field" required>
                       <option value="">{t('createListing.placeholders.select')}</option>
-                      {cities.map((city) => <option key={city} value={city}>{t(`common.cities.${city}`)}</option>)}
+                      {CITY_NAMES.map((city) => <option key={city} value={city.toLowerCase()}>{city}</option>)}
                     </select>
                   </div>
                   <div>
@@ -193,6 +211,17 @@ export default function CreateListingPage() {
                   <input type="text" placeholder={t('createListing.placeholders.neighborhood')} value={formData.neighborhood}
                     onChange={(e) => setFormData({ ...formData, neighborhood: e.target.value })}
                     className="input-field" />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-white/60 mb-2 uppercase tracking-wider">Konum (Haritadan İşaretle)</label>
+                  <LocationPicker
+                    lat={formData.latitude}
+                    lng={formData.longitude}
+                    centerLat={formData.city ? getCityCoords(formData.city)?.lat : undefined}
+                    centerLng={formData.city ? getCityCoords(formData.city)?.lng : undefined}
+                    onChange={(lat, lng) => setFormData({ ...formData, latitude: lat, longitude: lng })}
+                  />
                 </div>
 
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
