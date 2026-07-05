@@ -1,12 +1,13 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Camera, Mail, Phone } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
 import { useI18n } from '@/i18n/I18nProvider';
-import { sendOtp, verifyOtp, registerWithTempToken, sendEmailOtp, verifyEmailOtp, registerWithEmail, normalizePhone, isValidTrPhone } from '@/lib/auth';
+import { sendEmailOtp, verifyEmailOtp, registerWithEmail, loginWithFirebaseToken, normalizePhone, isValidTrPhone } from '@/lib/auth';
+import { sendFirebaseOtp, verifyFirebaseOtp } from '@/lib/firebase-phone';
 import { ApiCallError } from '@/lib/api';
 
 type AuthMethod = 'phone' | 'email';
@@ -90,7 +91,7 @@ export default function RegisterPage() {
     }
     setLoading(true);
     try {
-      await sendOtp(normalizePhone(phone), 'register');
+      await sendFirebaseOtp(normalizePhone(phone));
       setOtp(['', '', '', '', '', '']);
       setStep('otp');
     } catch (err) {
@@ -109,11 +110,12 @@ export default function RegisterPage() {
       if (authMethod === 'email') {
         const { temp_token } = await verifyEmailOtp(email, otp.join(''), 'register');
         setTempToken(temp_token);
+        setStep('profile');
       } else {
-        const { temp_token } = await verifyOtp(normalizePhone(phone), otp.join(''), 'register');
-        setTempToken(temp_token);
+        const idToken = await verifyFirebaseOtp(otp.join(''));
+        setTempToken(idToken);
+        setStep('profile');
       }
-      setStep('profile');
     } catch (err) {
       const e = err as ApiCallError;
       setError(e.message || 'Kod doğrulanamadı.');
@@ -140,22 +142,9 @@ export default function RegisterPage() {
     }
     setLoading(true);
     try {
-      const auth = await registerWithTempToken(tempToken, {
+      const auth = await loginWithFirebaseToken(tempToken, {
         full_name: profile.name,
-        age: profile.age ? Number(profile.age) : undefined,
-        gender: profile.gender || undefined,
         city: profile.city,
-        neighborhood: profile.neighborhood || undefined,
-        occupation: profile.occupation || undefined,
-        budget_min: profile.budgetMin ? Number(profile.budgetMin) : undefined,
-        budget_max: profile.budgetMax ? Number(profile.budgetMax) : undefined,
-        bio: profile.bio || undefined,
-        sleep_schedule: profile.sleepSchedule || undefined,
-        cleanliness_level: profile.cleanlinessLevel || undefined,
-        smoking: profile.smoking,
-        pets: profile.pets,
-        guests: profile.guests || undefined,
-        noise_tolerance: profile.noiseTolerance || undefined,
         kvkk_consent: kvkkConsent,
       });
       setAuth(auth.user);
@@ -223,6 +212,7 @@ export default function RegisterPage() {
 
   return (
     <div className="min-h-dvh bg-black flex flex-col">
+      <div id="recaptcha-container" />
       <div className="h-0.5 bg-secondary" />
 
       <div className="flex-1 flex items-center justify-center p-4 sm:p-6">

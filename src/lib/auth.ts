@@ -60,6 +60,16 @@ export async function registerWithTempToken(
   return auth;
 }
 
+export async function loginWithFirebaseToken(idToken: string, profileData?: { full_name?: string; city?: string; kvkk_consent?: boolean }): Promise<AuthResponse> {
+  const auth = await callApi<AuthResponse>({
+    method: 'POST',
+    url: '/auth/firebase/phone',
+    data: { id_token: idToken, ...profileData },
+  });
+  tokenStorage.set(auth.access_token, auth.refresh_token);
+  return auth;
+}
+
 export function sendEmailOtp(email: string, purpose: OtpPurpose) {
   return callApi<{ expires_in: number }>({
     method: 'POST',

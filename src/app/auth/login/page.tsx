@@ -6,7 +6,8 @@ import { useRouter } from 'next/navigation';
 import { Mail, Phone } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
 import { useI18n } from '@/i18n/I18nProvider';
-import { sendOtp, loginWithCode, loginWithEmail, normalizePhone, isValidTrPhone } from '@/lib/auth';
+import { loginWithEmail, loginWithFirebaseToken, normalizePhone, isValidTrPhone } from '@/lib/auth';
+import { sendFirebaseOtp, verifyFirebaseOtp } from '@/lib/firebase-phone';
 import { ApiCallError } from '@/lib/api';
 
 type AuthMethod = 'phone' | 'email';
@@ -55,7 +56,7 @@ export default function LoginPage() {
 
     setLoading(true);
     try {
-      await sendOtp(normalizePhone(phone), 'login');
+      await sendFirebaseOtp(normalizePhone(phone));
       setStep('otp');
     } catch (err) {
       const e = err as ApiCallError;
@@ -93,7 +94,8 @@ export default function LoginPage() {
     setError(null);
     setLoading(true);
     try {
-      const auth = await loginWithCode(normalizePhone(phone), otp.join(''));
+      const idToken = await verifyFirebaseOtp(otp.join(''));
+      const auth = await loginWithFirebaseToken(idToken);
       setAuth(auth.user);
       router.push('/dashboard');
     } catch (err) {
@@ -112,6 +114,7 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-dvh bg-black flex flex-col">
+      <div id="recaptcha-container" />
       <div className="h-0.5 bg-secondary" />
 
       <div className="flex-1 flex items-center justify-center p-4 sm:p-6">
