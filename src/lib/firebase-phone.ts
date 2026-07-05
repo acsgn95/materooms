@@ -8,22 +8,23 @@ import {
 } from 'firebase/auth';
 
 let confirmationResult: ConfirmationResult | null = null;
+let recaptchaVerifier: RecaptchaVerifier | null = null;
 
-export function setupRecaptcha(containerId: string): RecaptchaVerifier {
-  if ((window as any).recaptchaVerifier) {
-    (window as any).recaptchaVerifier.clear();
+export async function sendFirebaseOtp(phone: string): Promise<void> {
+  if (recaptchaVerifier) {
+    try { recaptchaVerifier.clear(); } catch {}
+    recaptchaVerifier = null;
   }
-  const verifier = new RecaptchaVerifier(auth, containerId, {
+
+  const container = document.getElementById('recaptcha-container');
+  if (container) container.innerHTML = '';
+
+  recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
     size: 'invisible',
     callback: () => {},
   });
-  (window as any).recaptchaVerifier = verifier;
-  return verifier;
-}
 
-export async function sendFirebaseOtp(phone: string): Promise<void> {
-  const verifier = setupRecaptcha('recaptcha-container');
-  confirmationResult = await signInWithPhoneNumber(auth, phone, verifier);
+  confirmationResult = await signInWithPhoneNumber(auth, phone, recaptchaVerifier);
 }
 
 export async function verifyFirebaseOtp(code: string): Promise<string> {
