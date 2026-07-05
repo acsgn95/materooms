@@ -1,13 +1,17 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import dynamic from 'next/dynamic';
 import { DashboardHeader } from '@/components/common/DashboardHeader';
-import { Search, MapPin, Users, Heart, SlidersHorizontal } from 'lucide-react';
+import { Search, MapPin, Users, Heart, SlidersHorizontal, List, Map } from 'lucide-react';
 import Link from 'next/link';
 import { useI18n } from '@/i18n/I18nProvider';
 import { listListings } from '@/lib/listings';
 import { ApiCallError } from '@/lib/api';
 import type { Listing, ListingType } from '@/types/api';
+import { CITY_NAMES } from '@/lib/cities';
+
+const ListingsMap = dynamic(() => import('@/components/ListingsMap'), { ssr: false });
 
 const scoreBand = (score: number | null) => {
   const s = score ?? 0;
@@ -46,6 +50,7 @@ export default function ListingsPage() {
   const [filters, setFilters] = useState<Filters>(INITIAL_FILTERS);
   const [sortBy, setSortBy] = useState<'newest' | 'price_asc' | 'price_desc' | 'score'>('newest');
   const [showFilters, setShowFilters] = useState(false);
+  const [viewMode, setViewMode] = useState<'list' | 'map'>('list');
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
   const [listings, setListings] = useState<Listing[]>([]);
   const [loading, setLoading] = useState(true);
@@ -114,7 +119,23 @@ export default function ListingsPage() {
       <main className="container-main py-6 sm:py-8">
         <div className="flex flex-col gap-2 mb-6 sm:flex-row sm:items-center sm:justify-between">
           <h1 className="text-2xl sm:text-3xl font-serif font-light text-white">{t('listings.title')}</h1>
-          <p className="text-white/40 text-sm">{t('listings.found', { count: filteredSorted.length })}</p>
+          <div className="flex items-center gap-3">
+            <p className="text-white/40 text-sm">{t('listings.found', { count: filteredSorted.length })}</p>
+            <div className="flex bg-white/5 rounded-lg p-1 gap-1">
+              <button
+                onClick={() => setViewMode('list')}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm transition ${viewMode === 'list' ? 'bg-white text-black' : 'text-white/50 hover:text-white'}`}
+              >
+                <List size={15} /> Liste
+              </button>
+              <button
+                onClick={() => setViewMode('map')}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm transition ${viewMode === 'map' ? 'bg-white text-black' : 'text-white/50 hover:text-white'}`}
+              >
+                <Map size={15} /> Harita
+              </button>
+            </div>
+          </div>
         </div>
 
         {error && (
@@ -128,9 +149,10 @@ export default function ListingsPage() {
             <div>
               <label className="block text-xs font-semibold text-white/60 mb-1 uppercase tracking-wider">{t('listings.filters.city')}</label>
               <select value={filters.city} onChange={(e) => setFilters({ ...filters, city: e.target.value })} className="input-field py-2">
-                <option value="istanbul">{t('common.cities.istanbul')}</option>
-                <option value="ankara">{t('common.cities.ankara')}</option>
-                <option value="izmir">{t('common.cities.izmir')}</option>
+                <option value="">Tüm Şehirler</option>
+                {CITY_NAMES.map(city => (
+                  <option key={city} value={city.toLowerCase()}>{city}</option>
+                ))}
               </select>
             </div>
             <div>
@@ -223,6 +245,10 @@ export default function ListingsPage() {
             <p className="text-white/40 mb-6">{t('listings.empty.description')}</p>
             <button onClick={() => { setFilters(INITIAL_FILTERS); search(); }}
               className="btn-primary">{t('common.actions.clearFilters')}</button>
+          </div>
+        ) : viewMode === 'map' ? (
+          <div style={{ height: '65vh' }}>
+            <ListingsMap listings={filteredSorted as any} />
           </div>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
