@@ -6,23 +6,25 @@ import { useRouter } from 'next/navigation';
 import { Camera, Mail, Phone } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
 import { useI18n } from '@/i18n/I18nProvider';
-import { sendOtp, verifyOtp, registerWithTempToken, registerWithEmail, normalizePhone, isValidTrPhone } from '@/lib/auth';
+import { sendOtp, verifyOtp, registerWithTempToken, sendEmailOtp, verifyEmailOtp, registerWithEmail, normalizePhone, isValidTrPhone } from '@/lib/auth';
 import { ApiCallError } from '@/lib/api';
 
 type AuthMethod = 'phone' | 'email';
+type Step = 'contact' | 'otp' | 'profile' | 'password';
 
 export default function RegisterPage() {
   const router = useRouter();
   const setAuth = useAuthStore((s) => s.setAuth);
   const { t } = useI18n();
 
-  const [step, setStep] = useState<'contact' | 'otp' | 'profile'>('contact');
+  const [step, setStep] = useState<Step>('contact');
   const [authMethod, setAuthMethod] = useState<AuthMethod>('phone');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
-  const [emailPassword, setEmailPassword] = useState('');
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [tempToken, setTempToken] = useState<string | null>(null);
+  const [password, setPassword] = useState('');
+  const [passwordConfirm, setPasswordConfirm] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
@@ -30,28 +32,17 @@ export default function RegisterPage() {
   const photoRef = useRef<HTMLInputElement>(null);
 
   const [profile, setProfile] = useState({
-    name: '',
-    age: '',
-    gender: '',
-    city: '',
-    neighborhood: '',
-    occupation: '',
-    budgetMin: '',
-    budgetMax: '',
-    bio: '',
-    sleepSchedule: '',
-    cleanlinessLevel: '',
-    smoking: false,
-    pets: false,
-    guests: '',
-    noiseTolerance: '',
+    name: '', age: '', gender: '', city: '', neighborhood: '',
+    occupation: '', budgetMin: '', budgetMax: '', bio: '',
+    sleepSchedule: '', cleanlinessLevel: '', smoking: false,
+    pets: false, guests: '', noiseTolerance: '',
   });
   const [kvkkConsent, setKvkkConsent] = useState(false);
 
-  const steps = ['contact', 'otp', 'profile'];
-  const stepIdx = steps.indexOf(step);
-  const contactValue = authMethod === 'phone' ? phone : email;
-  const contactTarget = t(`auth.contactTarget.${authMethod}`, { value: contactValue });
+  const allSteps: Step[] = authMethod === 'email'
+    ? ['contact', 'otp', 'profile', 'password']
+    : ['contact', 'otp', 'profile'];
+  const stepIdx = allSteps.indexOf(step);
 
   const handleOtpChange = (i: number, v: string) => {
     if (!/^\d?$/.test(v)) return;
@@ -69,9 +60,7 @@ export default function RegisterPage() {
     e.preventDefault();
     const digits = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6).split('');
     const next = [...otp];
-    digits.forEach((d, i) => {
-      next[i] = d;
-    });
+    digits.forEach((d, i) => { next[i] = d; });
     setOtp(next);
     otpRefs.current[Math.min(digits.length, 5)]?.focus();
   };
@@ -79,14 +68,22 @@ export default function RegisterPage() {
   const submitContact = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+
     if (authMethod === 'email') {
-      if (emailPassword.length < 8) {
-        setError('Şifre en az 8 karakter olmalı.');
-        return;
+      setLoading(true);
+      try {
+        await sendEmailOtp(email, 'register');
+        setOtp(['', '', '', '', '', '']);
+        setStep('otp');
+      } catch (err) {
+        const e = err as ApiCallError;
+        setError(e.message || 'Kod gönderilemedi.');
+      } finally {
+        setLoading(false);
       }
-      setStep('profile');
       return;
     }
+
     if (!isValidTrPhone(phone)) {
       setError('Telefon numarası geçersiz. +90 5XX XXX XX XX formatında girin.');
       return;
@@ -94,6 +91,7 @@ export default function RegisterPage() {
     setLoading(true);
     try {
       await sendOtp(normalizePhone(phone), 'register');
+      setOtp(['', '', '', '', '', '']);
       setStep('otp');
     } catch (err) {
       const e = err as ApiCallError;
@@ -108,8 +106,13 @@ export default function RegisterPage() {
     setError(null);
     setLoading(true);
     try {
-      const { temp_token } = await verifyOtp(normalizePhone(phone), otp.join(''), 'register');
-      setTempToken(temp_token);
+      if (authMethod === 'email') {
+        const { temp_token } = await verifyEmailOtp(email, otp.join(''), 'register');
+        setTempToken(temp_token);
+      } else {
+        const { temp_token } = await verifyOtp(normalizePhone(phone), otp.join(''), 'register');
+        setTempToken(temp_token);
+      }
       setStep('profile');
     } catch (err) {
       const e = err as ApiCallError;
@@ -126,39 +129,81 @@ export default function RegisterPage() {
       setError('Kayıt için KVKK aydınlatma metnini okuyup onaylamanız gerekir.');
       return;
     }
+    if (authMethod === 'email') {
+      setStep('password');
+      return;
+    }
+    if (!tempToken) {
+      setError('Oturum süresi doldu, lütfen baştan başlayın.');
+      setStep('contact');
+      return;
+    }
     setLoading(true);
-
-    const profilePayload = {
-      full_name: profile.name,
-      age: profile.age ? Number(profile.age) : undefined,
-      gender: profile.gender || undefined,
-      city: profile.city,
-      neighborhood: profile.neighborhood || undefined,
-      occupation: profile.occupation || undefined,
-      budget_min: profile.budgetMin ? Number(profile.budgetMin) : undefined,
-      budget_max: profile.budgetMax ? Number(profile.budgetMax) : undefined,
-      bio: profile.bio || undefined,
-      sleep_schedule: profile.sleepSchedule || undefined,
-      cleanliness_level: profile.cleanlinessLevel || undefined,
-      smoking: profile.smoking,
-      pets: profile.pets,
-      guests: profile.guests || undefined,
-      noise_tolerance: profile.noiseTolerance || undefined,
-      kvkk_consent: kvkkConsent,
-    };
-
     try {
-      let auth;
-      if (authMethod === 'email') {
-        auth = await registerWithEmail(email, emailPassword, profilePayload);
-      } else {
-        if (!tempToken) {
-          setError('Oturum süresi doldu, lütfen baştan başlayın.');
-          setStep('contact');
-          return;
-        }
-        auth = await registerWithTempToken(tempToken, profilePayload);
-      }
+      const auth = await registerWithTempToken(tempToken, {
+        full_name: profile.name,
+        age: profile.age ? Number(profile.age) : undefined,
+        gender: profile.gender || undefined,
+        city: profile.city,
+        neighborhood: profile.neighborhood || undefined,
+        occupation: profile.occupation || undefined,
+        budget_min: profile.budgetMin ? Number(profile.budgetMin) : undefined,
+        budget_max: profile.budgetMax ? Number(profile.budgetMax) : undefined,
+        bio: profile.bio || undefined,
+        sleep_schedule: profile.sleepSchedule || undefined,
+        cleanliness_level: profile.cleanlinessLevel || undefined,
+        smoking: profile.smoking,
+        pets: profile.pets,
+        guests: profile.guests || undefined,
+        noise_tolerance: profile.noiseTolerance || undefined,
+        kvkk_consent: kvkkConsent,
+      });
+      setAuth(auth.user);
+      router.push('/dashboard');
+    } catch (err) {
+      const e = err as ApiCallError;
+      setError(e.message || 'Kayıt başarısız.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const submitPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    if (password.length < 8) {
+      setError('Şifre en az 8 karakter olmalı.');
+      return;
+    }
+    if (password !== passwordConfirm) {
+      setError('Şifreler eşleşmiyor.');
+      return;
+    }
+    if (!tempToken) {
+      setError('Oturum süresi doldu, lütfen baştan başlayın.');
+      setStep('contact');
+      return;
+    }
+    setLoading(true);
+    try {
+      const auth = await registerWithEmail(tempToken, password, passwordConfirm, {
+        full_name: profile.name,
+        age: profile.age ? Number(profile.age) : undefined,
+        gender: profile.gender || undefined,
+        city: profile.city,
+        neighborhood: profile.neighborhood || undefined,
+        occupation: profile.occupation || undefined,
+        budget_min: profile.budgetMin ? Number(profile.budgetMin) : undefined,
+        budget_max: profile.budgetMax ? Number(profile.budgetMax) : undefined,
+        bio: profile.bio || undefined,
+        sleep_schedule: profile.sleepSchedule || undefined,
+        cleanliness_level: profile.cleanlinessLevel || undefined,
+        smoking: profile.smoking,
+        pets: profile.pets,
+        guests: profile.guests || undefined,
+        noise_tolerance: profile.noiseTolerance || undefined,
+        kvkk_consent: kvkkConsent,
+      });
       setAuth(auth.user);
       router.push('/dashboard');
     } catch (err) {
@@ -190,7 +235,7 @@ export default function RegisterPage() {
           <p className="text-white/40 text-sm mb-6">{t('auth.registerSubtitle')}</p>
 
           <div className="flex gap-1.5 mb-8">
-            {steps.map((_, i) => (
+            {allSteps.map((_, i) => (
               <div key={i} className={`h-0.5 flex-1 rounded-full transition-colors ${i <= stepIdx ? 'bg-secondary' : 'bg-white/10'}`} />
             ))}
           </div>
@@ -208,10 +253,8 @@ export default function RegisterPage() {
                   <button
                     key={method}
                     type="button"
-                    onClick={() => setAuthMethod(method)}
-                    className={`rounded-full px-4 py-2 text-sm font-medium transition ${
-                      authMethod === method ? 'bg-white text-black' : 'text-white/50 hover:text-white'
-                    }`}
+                    onClick={() => { setAuthMethod(method); setError(null); }}
+                    className={`rounded-full px-4 py-2 text-sm font-medium transition ${authMethod === method ? 'bg-white text-black' : 'text-white/50 hover:text-white'}`}
                   >
                     {t(`auth.methods.${method}`)}
                   </button>
@@ -229,7 +272,7 @@ export default function RegisterPage() {
                   <input
                     type={authMethod === 'phone' ? 'tel' : 'email'}
                     placeholder={authMethod === 'phone' ? '+90 5XX XXX XXXX' : t('auth.placeholders.email')}
-                    value={contactValue}
+                    value={authMethod === 'phone' ? phone : email}
                     onChange={(e) => authMethod === 'phone' ? setPhone(e.target.value) : setEmail(e.target.value)}
                     className="min-w-0 flex-1 bg-transparent py-3 text-white placeholder:text-white/30 focus:outline-none"
                     required
@@ -237,23 +280,8 @@ export default function RegisterPage() {
                 </div>
               </div>
 
-              {authMethod === 'email' && (
-                <div>
-                  <label className="block text-xs font-semibold text-white/60 mb-2 uppercase tracking-wider">Şifre</label>
-                  <input
-                    type="password"
-                    placeholder="En az 8 karakter"
-                    value={emailPassword}
-                    onChange={(e) => setEmailPassword(e.target.value)}
-                    className="input-field w-full"
-                    required
-                    minLength={8}
-                  />
-                </div>
-              )}
-
               <button type="submit" disabled={loading} className="btn-primary w-full disabled:opacity-40">
-                {loading ? t('auth.buttons.sending') : (authMethod === 'email' ? 'Devam Et' : t('auth.buttons.sendCode'))}
+                {loading ? t('auth.buttons.sending') : (authMethod === 'email' ? 'Doğrulama Kodu Gönder' : t('auth.buttons.sendCode'))}
               </button>
               <p className="text-center text-sm text-white/40">
                 {t('auth.links.haveAccount')} <Link href="/auth/login" className="text-secondary hover:underline">{t('auth.links.login')}</Link>
@@ -265,7 +293,11 @@ export default function RegisterPage() {
             <form onSubmit={submitOtp} className="space-y-5">
               <div>
                 <label className="block text-xs font-semibold text-white/60 mb-2 uppercase tracking-wider">{t('auth.fields.otp')}</label>
-                <p className="text-white/40 text-sm mb-4">{t('auth.otpSent', { target: contactTarget })}</p>
+                <p className="text-white/40 text-sm mb-4">
+                  {authMethod === 'email'
+                    ? `${email} adresine gönderilen kodu girin`
+                    : t('auth.otpSent', { target: normalizePhone(phone) })}
+                </p>
                 <div className="grid grid-cols-6 gap-2" onPaste={handleOtpPaste}>
                   {otp.map((d, i) => (
                     <input
@@ -303,45 +335,22 @@ export default function RegisterPage() {
                     : <Camera size={24} className="text-white/30" />}
                 </div>
                 <button type="button" onClick={() => photoRef.current?.click()} className="text-secondary text-xs hover:underline">{t('auth.buttons.addPhoto')}</button>
-                <input
-                  ref={photoRef}
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => {
-                    const f = e.target.files?.[0];
-                    if (f) setPhotoPreview(URL.createObjectURL(f));
-                  }}
-                  className="hidden"
-                />
+                <input ref={photoRef} type="file" accept="image/*"
+                  onChange={(e) => { const f = e.target.files?.[0]; if (f) setPhotoPreview(URL.createObjectURL(f)); }}
+                  className="hidden" />
               </div>
 
-              {[
-                { label: t('auth.fields.name'), key: 'name', type: 'text', placeholder: t('auth.placeholders.name'), required: true },
-              ].map((f) => (
-                <div key={f.key}>
-                  <label className="block text-xs font-semibold text-white/60 mb-1 uppercase tracking-wider">{f.label}</label>
-                  <input
-                    type={f.type}
-                    placeholder={f.placeholder}
-                    required={f.required}
-                    value={(profile as unknown as Record<string, string>)[f.key]}
-                    onChange={(e) => setProfile({ ...profile, [f.key]: e.target.value })}
-                    className="input-field"
-                  />
-                </div>
-              ))}
+              <div>
+                <label className="block text-xs font-semibold text-white/60 mb-1 uppercase tracking-wider">{t('auth.fields.name')}</label>
+                <input type="text" placeholder={t('auth.placeholders.name')} required value={profile.name}
+                  onChange={(e) => setProfile({ ...profile, name: e.target.value })} className="input-field" />
+              </div>
 
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <div>
                   <label className="block text-xs font-semibold text-white/60 mb-1 uppercase tracking-wider">{t('auth.fields.age')}</label>
-                  <input
-                    type="number"
-                    placeholder="25"
-                    min="18"
-                    value={profile.age}
-                    onChange={(e) => setProfile({ ...profile, age: e.target.value })}
-                    className="input-field"
-                  />
+                  <input type="number" placeholder="25" min="18" value={profile.age}
+                    onChange={(e) => setProfile({ ...profile, age: e.target.value })} className="input-field" />
                 </div>
                 <div>
                   <label className="block text-xs font-semibold text-white/60 mb-1 uppercase tracking-wider">{t('auth.fields.gender')}</label>
@@ -366,49 +375,28 @@ export default function RegisterPage() {
                 </div>
                 <div>
                   <label className="block text-xs font-semibold text-white/60 mb-1 uppercase tracking-wider">{t('auth.fields.occupation')}</label>
-                  <input
-                    type="text"
-                    placeholder={t('auth.placeholders.occupation')}
-                    value={profile.occupation}
-                    onChange={(e) => setProfile({ ...profile, occupation: e.target.value })}
-                    className="input-field"
-                  />
+                  <input type="text" placeholder={t('auth.placeholders.occupation')} value={profile.occupation}
+                    onChange={(e) => setProfile({ ...profile, occupation: e.target.value })} className="input-field" />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <div>
                   <label className="block text-xs font-semibold text-white/60 mb-1 uppercase tracking-wider">{t('auth.fields.budgetMin')}</label>
-                  <input
-                    type="number"
-                    placeholder="5000"
-                    value={profile.budgetMin}
-                    onChange={(e) => setProfile({ ...profile, budgetMin: e.target.value })}
-                    className="input-field"
-                  />
+                  <input type="number" placeholder="5000" value={profile.budgetMin}
+                    onChange={(e) => setProfile({ ...profile, budgetMin: e.target.value })} className="input-field" />
                 </div>
                 <div>
                   <label className="block text-xs font-semibold text-white/60 mb-1 uppercase tracking-wider">{t('auth.fields.budgetMax')}</label>
-                  <input
-                    type="number"
-                    placeholder="10000"
-                    value={profile.budgetMax}
-                    onChange={(e) => setProfile({ ...profile, budgetMax: e.target.value })}
-                    className="input-field"
-                  />
+                  <input type="number" placeholder="10000" value={profile.budgetMax}
+                    onChange={(e) => setProfile({ ...profile, budgetMax: e.target.value })} className="input-field" />
                 </div>
               </div>
 
               <div>
                 <label className="block text-xs font-semibold text-white/60 mb-1 uppercase tracking-wider">{t('auth.fields.bio')}</label>
-                <textarea
-                  placeholder={t('auth.placeholders.bio')}
-                  value={profile.bio}
-                  maxLength={300}
-                  rows={2}
-                  onChange={(e) => setProfile({ ...profile, bio: e.target.value })}
-                  className="input-field resize-none"
-                />
+                <textarea placeholder={t('auth.placeholders.bio')} value={profile.bio} maxLength={300} rows={2}
+                  onChange={(e) => setProfile({ ...profile, bio: e.target.value })} className="input-field resize-none" />
                 <p className="text-xs text-white/30 text-right">{profile.bio.length}/300</p>
               </div>
 
@@ -423,11 +411,8 @@ export default function RegisterPage() {
                   ].map((f) => (
                     <div key={f.key}>
                       <label className="block text-xs text-white/40 mb-1">{f.label}</label>
-                      <select
-                        value={(profile as unknown as Record<string, string>)[f.key]}
-                        onChange={(e) => setProfile({ ...profile, [f.key]: e.target.value })}
-                        className="input-field text-sm py-2"
-                      >
+                      <select value={(profile as unknown as Record<string, string>)[f.key]}
+                        onChange={(e) => setProfile({ ...profile, [f.key]: e.target.value })} className="input-field text-sm py-2">
                         <option value="">{t('auth.profile.select')}</option>
                         {f.opts.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
                       </select>
@@ -435,17 +420,10 @@ export default function RegisterPage() {
                   ))}
                 </div>
                 <div className="flex flex-col gap-3 sm:flex-row sm:gap-6">
-                  {[
-                    ['smoking', t('auth.profile.lifestyle.smoking')],
-                    ['pets', t('auth.profile.lifestyle.pets')],
-                  ].map(([key, label]) => (
+                  {[['smoking', t('auth.profile.lifestyle.smoking')], ['pets', t('auth.profile.lifestyle.pets')]].map(([key, label]) => (
                     <label key={key} className="flex items-center gap-2 cursor-pointer text-sm text-white/60">
-                      <input
-                        type="checkbox"
-                        checked={(profile as unknown as Record<string, boolean>)[key]}
-                        onChange={(e) => setProfile({ ...profile, [key]: e.target.checked })}
-                        className="accent-secondary"
-                      />
+                      <input type="checkbox" checked={(profile as unknown as Record<string, boolean>)[key]}
+                        onChange={(e) => setProfile({ ...profile, [key]: e.target.checked })} className="accent-secondary" />
                       {label}
                     </label>
                   ))}
@@ -454,24 +432,55 @@ export default function RegisterPage() {
 
               <div className="border-t border-white/10 pt-4">
                 <label className="flex items-start gap-3 cursor-pointer text-sm text-white/70">
-                  <input
-                    type="checkbox"
-                    checked={kvkkConsent}
-                    onChange={(e) => setKvkkConsent(e.target.checked)}
-                    className="accent-secondary mt-0.5 flex-shrink-0"
-                  />
+                  <input type="checkbox" checked={kvkkConsent} onChange={(e) => setKvkkConsent(e.target.checked)} className="accent-secondary mt-0.5 flex-shrink-0" />
                   <span>
                     <Link href="/legal/kvkk" target="_blank" className="text-secondary hover:underline">KVKK Aydınlatma Metni</Link>
                     {"'ni okudum, kişisel verilerimin platform işleyişi için işlenmesine açık rıza veriyorum."}
                   </span>
                 </label>
-                <p className="mt-2 text-xs text-amber-400/80">
-                  Bu uygulama bir <strong>demo/test</strong> ortamıdır. Gerçek kimlik veya hassas veri girmeyiniz.
-                </p>
               </div>
 
               <button type="submit" disabled={loading || !profile.name || !profile.city || !kvkkConsent} className="btn-primary w-full disabled:opacity-40 mt-2">
-                {loading ? t('auth.buttons.saving') : t('auth.buttons.start')}
+                {loading ? t('auth.buttons.saving') : (authMethod === 'email' ? 'Devam Et' : t('auth.buttons.start'))}
+              </button>
+            </form>
+          )}
+
+          {step === 'password' && (
+            <form onSubmit={submitPassword} className="space-y-5">
+              <div>
+                <p className="text-white/40 text-sm mb-6">Son adım — hesabınız için bir şifre belirleyin.</p>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-xs font-semibold text-white/60 mb-2 uppercase tracking-wider">Şifre</label>
+                    <input
+                      type="password"
+                      placeholder="En az 8 karakter"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="input-field w-full"
+                      required
+                      minLength={8}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-white/60 mb-2 uppercase tracking-wider">Şifre Tekrar</label>
+                    <input
+                      type="password"
+                      placeholder="Şifrenizi tekrar girin"
+                      value={passwordConfirm}
+                      onChange={(e) => setPasswordConfirm(e.target.value)}
+                      className="input-field w-full"
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+              <button type="submit" disabled={loading || !password || !passwordConfirm} className="btn-primary w-full disabled:opacity-40">
+                {loading ? 'Kaydediliyor...' : 'Kaydı Tamamla'}
+              </button>
+              <button type="button" onClick={() => setStep('profile')} className="w-full text-secondary text-sm hover:underline">
+                Geri
               </button>
             </form>
           )}

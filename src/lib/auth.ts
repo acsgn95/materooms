@@ -60,6 +60,22 @@ export async function registerWithTempToken(
   return auth;
 }
 
+export function sendEmailOtp(email: string, purpose: OtpPurpose) {
+  return callApi<{ expires_in: number }>({
+    method: 'POST',
+    url: '/auth/send-otp/email',
+    data: { email, purpose },
+  });
+}
+
+export function verifyEmailOtp(email: string, code: string, purpose: OtpPurpose) {
+  return callApi<VerifyOtpResponse>({
+    method: 'POST',
+    url: '/auth/verify-otp/email',
+    data: { email, code, purpose },
+  });
+}
+
 export async function loginWithEmail(email: string, password: string): Promise<AuthResponse> {
   const auth = await callApi<AuthResponse>({
     method: 'POST',
@@ -71,14 +87,16 @@ export async function loginWithEmail(email: string, password: string): Promise<A
 }
 
 export async function registerWithEmail(
-  email: string,
+  tempToken: string,
   password: string,
+  passwordConfirm: string,
   payload: RegisterPayload
 ): Promise<AuthResponse> {
   const auth = await callApi<AuthResponse>({
     method: 'POST',
     url: '/auth/register/email',
-    data: { email, password, ...payload },
+    data: { password, password_confirm: passwordConfirm, ...payload },
+    headers: authHeader(tempToken),
   });
   tokenStorage.set(auth.access_token, auth.refresh_token);
   return auth;
