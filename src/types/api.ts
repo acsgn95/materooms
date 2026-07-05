@@ -116,6 +116,8 @@ export type ListingCreatePayload = {
   residents_total: number;
   house_rules?: HouseRules;
   amenities?: string[];
+  latitude?: number;
+  longitude?: number;
 };
 
 export type ListingUpdatePayload = Partial<{
