@@ -3,15 +3,16 @@
 import React, { useRef, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Camera, Mail, Phone } from 'lucide-react';
+import { Camera, Mail } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
 import { useI18n } from '@/i18n/I18nProvider';
-import { sendEmailOtp, verifyEmailOtp, registerWithEmail, loginWithFirebaseToken, normalizePhone, isValidTrPhone } from '@/lib/auth';
-import { sendFirebaseOtp, verifyFirebaseOtp } from '@/lib/firebase-phone';
+import { sendEmailOtp, verifyEmailOtp, registerWithEmail } from '@/lib/auth';
 import { ApiCallError } from '@/lib/api';
+import { CITY_NAMES } from '@/lib/cities';
 
-type AuthMethod = 'phone' | 'email';
 type Step = 'contact' | 'otp' | 'profile' | 'password';
+
+const ALL_STEPS: Step[] = ['contact', 'otp', 'profile', 'password'];
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -19,8 +20,6 @@ export default function RegisterPage() {
   const { t } = useI18n();
 
   const [step, setStep] = useState<Step>('contact');
-  const [authMethod, setAuthMethod] = useState<AuthMethod>('phone');
-  const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [tempToken, setTempToken] = useState<string | null>(null);
@@ -40,10 +39,7 @@ export default function RegisterPage() {
   });
   const [kvkkConsent, setKvkkConsent] = useState(false);
 
-  const allSteps: Step[] = authMethod === 'email'
-    ? ['contact', 'otp', 'profile', 'password']
-    : ['contact', 'otp', 'profile'];
-  const stepIdx = allSteps.indexOf(step);
+  const stepIdx = ALL_STEPS.indexOf(step);
 
   const handleOtpChange = (i: number, v: string) => {
     if (!/^\d?$/.test(v)) return;
@@ -69,29 +65,9 @@ export default function RegisterPage() {
   const submitContact = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-
-    if (authMethod === 'email') {
-      setLoading(true);
-      try {
-        await sendEmailOtp(email, 'register');
-        setOtp(['', '', '', '', '', '']);
-        setStep('otp');
-      } catch (err) {
-        const e = err as ApiCallError;
-        setError(e.message || 'Kod gönderilemedi.');
-      } finally {
-        setLoading(false);
-      }
-      return;
-    }
-
-    if (!isValidTrPhone(phone)) {
-      setError('Telefon numarası geçersiz. +90 5XX XXX XX XX formatında girin.');
-      return;
-    }
     setLoading(true);
     try {
-      await sendFirebaseOtp(normalizePhone(phone));
+      await sendEmailOtp(email, 'register');
       setOtp(['', '', '', '', '', '']);
       setStep('otp');
     } catch (err) {
@@ -107,15 +83,9 @@ export default function RegisterPage() {
     setError(null);
     setLoading(true);
     try {
-      if (authMethod === 'email') {
-        const { temp_token } = await verifyEmailOtp(email, otp.join(''), 'register');
-        setTempToken(temp_token);
-        setStep('profile');
-      } else {
-        const idToken = await verifyFirebaseOtp(otp.join(''));
-        setTempToken(idToken);
-        setStep('profile');
-      }
+      const { temp_token } = await verifyEmailOtp(email, otp.join(''), 'register');
+      setTempToken(temp_token);
+      setStep('profile');
     } catch (err) {
       const e = err as ApiCallError;
       setError(e.message || 'Kod doğrulanamadı.');
@@ -124,37 +94,14 @@ export default function RegisterPage() {
     }
   };
 
-  const submitProfile = async (e: React.FormEvent) => {
+  const submitProfile = (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     if (!kvkkConsent) {
       setError('Kayıt için KVKK aydınlatma metnini okuyup onaylamanız gerekir.');
       return;
     }
-    if (authMethod === 'email') {
-      setStep('password');
-      return;
-    }
-    if (!tempToken) {
-      setError('Oturum süresi doldu, lütfen baştan başlayın.');
-      setStep('contact');
-      return;
-    }
-    setLoading(true);
-    try {
-      const auth = await loginWithFirebaseToken(tempToken, {
-        full_name: profile.name,
-        city: profile.city,
-        kvkk_consent: kvkkConsent,
-      });
-      setAuth(auth.user);
-      router.push('/dashboard');
-    } catch (err) {
-      const e = err as ApiCallError;
-      setError(e.message || 'Kayıt başarısız.');
-    } finally {
-      setLoading(false);
-    }
+    setStep('password');
   };
 
   const submitPassword = async (e: React.FormEvent) => {
@@ -203,16 +150,8 @@ export default function RegisterPage() {
     }
   };
 
-  const resetToContactStep = () => {
-    setOtp(['', '', '', '', '', '']);
-    setError(null);
-    setTempToken(null);
-    setStep('contact');
-  };
-
   return (
     <div className="min-h-dvh bg-black flex flex-col">
-      <div id="recaptcha-container" />
       <div className="h-0.5 bg-secondary" />
 
       <div className="flex-1 flex items-center justify-center p-4 sm:p-6">
@@ -225,7 +164,7 @@ export default function RegisterPage() {
           <p className="text-white/40 text-sm mb-6">{t('auth.registerSubtitle')}</p>
 
           <div className="flex gap-1.5 mb-8">
-            {allSteps.map((_, i) => (
+            {ALL_STEPS.map((_, i) => (
               <div key={i} className={`h-0.5 flex-1 rounded-full transition-colors ${i <= stepIdx ? 'bg-secondary' : 'bg-white/10'}`} />
             ))}
           </div>
@@ -238,32 +177,15 @@ export default function RegisterPage() {
 
           {step === 'contact' && (
             <form onSubmit={submitContact} className="space-y-5">
-              <div className="grid grid-cols-2 gap-2 rounded-full bg-white/5 p-1">
-                {(['phone', 'email'] as AuthMethod[]).map((method) => (
-                  <button
-                    key={method}
-                    type="button"
-                    onClick={() => { setAuthMethod(method); setError(null); }}
-                    className={`rounded-full px-4 py-2 text-sm font-medium transition ${authMethod === method ? 'bg-white text-black' : 'text-white/50 hover:text-white'}`}
-                  >
-                    {t(`auth.methods.${method}`)}
-                  </button>
-                ))}
-              </div>
-
               <div>
-                <label className="block text-xs font-semibold text-white/60 mb-2 uppercase tracking-wider">
-                  {t(`auth.fields.${authMethod}`)}
-                </label>
+                <label className="block text-xs font-semibold text-white/60 mb-2 uppercase tracking-wider">E-posta</label>
                 <div className="flex items-center gap-3 rounded-lg border border-white/10 bg-zinc-800 px-4 transition-all focus-within:border-transparent focus-within:ring-2 focus-within:ring-[#E8192C]">
-                  {authMethod === 'phone'
-                    ? <Phone className="flex-shrink-0 text-white/30" size={18} />
-                    : <Mail className="flex-shrink-0 text-white/30" size={18} />}
+                  <Mail className="flex-shrink-0 text-white/30" size={18} />
                   <input
-                    type={authMethod === 'phone' ? 'tel' : 'email'}
-                    placeholder={authMethod === 'phone' ? '+90 5XX XXX XXXX' : t('auth.placeholders.email')}
-                    value={authMethod === 'phone' ? phone : email}
-                    onChange={(e) => authMethod === 'phone' ? setPhone(e.target.value) : setEmail(e.target.value)}
+                    type="email"
+                    placeholder="ornek@mail.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     className="min-w-0 flex-1 bg-transparent py-3 text-white placeholder:text-white/30 focus:outline-none"
                     required
                   />
@@ -271,7 +193,7 @@ export default function RegisterPage() {
               </div>
 
               <button type="submit" disabled={loading} className="btn-primary w-full disabled:opacity-40">
-                {loading ? t('auth.buttons.sending') : (authMethod === 'email' ? 'Doğrulama Kodu Gönder' : t('auth.buttons.sendCode'))}
+                {loading ? 'Gönderiliyor...' : 'Doğrulama Kodu Gönder'}
               </button>
               <p className="text-center text-sm text-white/40">
                 {t('auth.links.haveAccount')} <Link href="/auth/login" className="text-secondary hover:underline">{t('auth.links.login')}</Link>
@@ -283,11 +205,7 @@ export default function RegisterPage() {
             <form onSubmit={submitOtp} className="space-y-5">
               <div>
                 <label className="block text-xs font-semibold text-white/60 mb-2 uppercase tracking-wider">{t('auth.fields.otp')}</label>
-                <p className="text-white/40 text-sm mb-4">
-                  {authMethod === 'email'
-                    ? `${email} adresine gönderilen kodu girin`
-                    : t('auth.otpSent', { target: normalizePhone(phone) })}
-                </p>
+                <p className="text-white/40 text-sm mb-4">{email} adresine gönderilen 6 haneli kodu girin</p>
                 <div className="grid grid-cols-6 gap-2" onPaste={handleOtpPaste}>
                   {otp.map((d, i) => (
                     <input
@@ -307,7 +225,7 @@ export default function RegisterPage() {
               <button type="submit" disabled={loading || otp.join('').length !== 6} className="btn-primary w-full disabled:opacity-40">
                 {loading ? t('auth.buttons.verifying') : t('common.actions.continue')}
               </button>
-              <button type="button" onClick={resetToContactStep} className="w-full text-secondary text-sm hover:underline">
+              <button type="button" onClick={() => { setOtp(['', '', '', '', '', '']); setError(null); setStep('contact'); }} className="w-full text-secondary text-sm hover:underline">
                 {t('auth.buttons.back')}
               </button>
             </form>
@@ -358,9 +276,7 @@ export default function RegisterPage() {
                   <label className="block text-xs font-semibold text-white/60 mb-1 uppercase tracking-wider">{t('auth.fields.city')}</label>
                   <select value={profile.city} onChange={(e) => setProfile({ ...profile, city: e.target.value })} className="input-field" required>
                     <option value="">{t('auth.profile.select')}</option>
-                    <option value="istanbul">{t('common.cities.istanbul')}</option>
-                    <option value="ankara">{t('common.cities.ankara')}</option>
-                    <option value="izmir">{t('common.cities.izmir')}</option>
+                    {CITY_NAMES.map((city) => <option key={city} value={city.toLowerCase()}>{city}</option>)}
                   </select>
                 </div>
                 <div>
@@ -430,40 +346,38 @@ export default function RegisterPage() {
                 </label>
               </div>
 
-              <button type="submit" disabled={loading || !profile.name || !profile.city || !kvkkConsent} className="btn-primary w-full disabled:opacity-40 mt-2">
-                {loading ? t('auth.buttons.saving') : (authMethod === 'email' ? 'Devam Et' : t('auth.buttons.start'))}
+              <button type="submit" disabled={!profile.name || !profile.city || !kvkkConsent} className="btn-primary w-full disabled:opacity-40 mt-2">
+                Devam Et
               </button>
             </form>
           )}
 
           {step === 'password' && (
             <form onSubmit={submitPassword} className="space-y-5">
-              <div>
-                <p className="text-white/40 text-sm mb-6">Son adım — hesabınız için bir şifre belirleyin.</p>
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-xs font-semibold text-white/60 mb-2 uppercase tracking-wider">Şifre</label>
-                    <input
-                      type="password"
-                      placeholder="En az 8 karakter"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      className="input-field w-full"
-                      required
-                      minLength={8}
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-semibold text-white/60 mb-2 uppercase tracking-wider">Şifre Tekrar</label>
-                    <input
-                      type="password"
-                      placeholder="Şifrenizi tekrar girin"
-                      value={passwordConfirm}
-                      onChange={(e) => setPasswordConfirm(e.target.value)}
-                      className="input-field w-full"
-                      required
-                    />
-                  </div>
+              <p className="text-white/40 text-sm mb-6">Son adım — hesabınız için bir şifre belirleyin.</p>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-xs font-semibold text-white/60 mb-2 uppercase tracking-wider">Şifre</label>
+                  <input
+                    type="password"
+                    placeholder="En az 8 karakter"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="input-field w-full"
+                    required
+                    minLength={8}
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-white/60 mb-2 uppercase tracking-wider">Şifre Tekrar</label>
+                  <input
+                    type="password"
+                    placeholder="Şifrenizi tekrar girin"
+                    value={passwordConfirm}
+                    onChange={(e) => setPasswordConfirm(e.target.value)}
+                    className="input-field w-full"
+                    required
+                  />
                 </div>
               </div>
               <button type="submit" disabled={loading || !password || !passwordConfirm} className="btn-primary w-full disabled:opacity-40">
