@@ -98,6 +98,8 @@ export type Listing = {
   is_active: boolean;
   expires_at: string;
   created_at: string;
+  latitude?: number | null;
+  longitude?: number | null;
   photos: ListingPhoto[];
   owner: ListingOwnerBrief | null;
 };

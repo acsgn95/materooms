@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import dynamic from 'next/dynamic';
 import { DashboardHeader } from '@/components/common/DashboardHeader';
 import { VerificationBadges, ScoreBadge } from '@/components/common/DashboardHeader';
 import { ArrowLeft, MapPin, Users, Calendar, Wifi, Sofa, WashingMachine, Wind, MessageSquare, Heart, Share2, Flag } from 'lucide-react';
@@ -10,6 +11,8 @@ import { useI18n } from '@/i18n/I18nProvider';
 import { getListing } from '@/lib/listings';
 import { ApiCallError } from '@/lib/api';
 import type { Listing } from '@/types/api';
+
+const ListingDetailMap = dynamic(() => import('@/components/ListingDetailMap'), { ssr: false });
 
 export default function ListingDetailPage() {
   const params = useParams<{ id: string }>();
@@ -189,6 +192,17 @@ export default function ListingDetailPage() {
                 </div>
               </div>
             </div>
+
+            {listing.latitude && listing.longitude && (
+              <div className="card">
+                <h2 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
+                  <MapPin size={20} className="text-secondary" />
+                  Konum
+                </h2>
+                <ListingDetailMap lat={listing.latitude} lng={listing.longitude} title={listing.title} />
+                <p className="text-xs text-white/30 mt-2">Gösterilen konum yaklaşık olabilir.</p>
+              </div>
+            )}
           </div>
 
           <div className="space-y-6">
